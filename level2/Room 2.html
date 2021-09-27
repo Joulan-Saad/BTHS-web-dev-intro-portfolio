@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			sessionStorage.mansionhallTmpTxt = ""
+			displayStats();
+			booksPressed = "";
+			numOfBooksPressed = 0;
+			text1 = ""
+			text1 = document.getElementById("infoTxt");
+			vaultOpen = "closed";
+			userMsg = "";
+			secretRoomCounter1 = 0;
+			secretRoomCounter2 = 0;
+			secretRoomCounter3 = 0;
+		}
+		function pressBook1()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+			}
+			else
+			{
+				if (sessionStorage.foundStar2 == "true")
+				{
+					userMsg = "The book refuses to budge, you've already found the star here! Go away and find something else";
+					secretRoomCounter1++;
+					if (secretRoomCounter1 == 6 && secretRoomCounter2 == 6 && secretRoomCounter3 == 6)
+					{
+						window.location.href = "nightmare room.html";
+					}
+				}
+				else 
+				{
+					numOfBooksPressed++;
+					booksPressed += "one";
+					userMsg = "beep";
+					orderGameResult();
+				}
+			}
+			
+			display();
+		}
+		function pressBook2()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+			}
+			else
+			{
+				if (sessionStorage.foundStar2 == "true")
+				{
+					userMsg = "The book refuses to budge, you've already found the star here! Go away and find something else";
+					secretRoomCounter2++;
+					if (secretRoomCounter1 == 6 && secretRoomCounter2 == 6 && secretRoomCounter3 == 6)
+					{
+						window.location.href = "nightmare room.html"
+					}
+				}
+				else 
+				{
+					numOfBooksPressed++;
+					booksPressed += "two";
+					userMsg = "boop";
+					orderGameResult();
+				}
+			}
+			
+			display();
+		}
+		function pressBook3()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+			}
+			else
+			{
+				if (sessionStorage.foundStar2 == "true")
+				{
+					userMsg = "The book refuses to budge, you've already found the star here! Go away and find something else";
+					secretRoomCounter3++;
+					if (secretRoomCounter1 == 6 && secretRoomCounter2 == 6 && secretRoomCounter3 == 6)
+					{
+						window.location.href = "nightmare room.html"
+					}
+				}
+				else 
+				{
+					numOfBooksPressed++;
+					booksPressed += "three"
+					userMsg = "s̴̡̛̗̬̜̣̦̞͋͆̽͘ȩ̶̡̹̼̙̹̣̦͎̹̅h̴͍̃͆̏̓͑̚̚f̶̘̼̦̱͕̅g̸̹̗̰̟̹̼̥͊̓̀̂͗͆̋̚͜͝͝͝f̶̡̨̛̩̥̱̗̗̩͕̗̘͍̲̰̆̉͝š̴͔͖̙̳͍̳͕͌̒͐͛̅̅́͆̔̒́̒͜͝ͅd̵̨̻̦͊̔́̆̒͐͒͆̉̄͒̀̉͝ĝ̸̹̯̗͈̱̝̱̭́͂̈́̐͂̌̀͝ḧ̴̡̢̨̛̻̙̳̘͔̱̟͙̺̹̤́̿̊̽̄͌͛̕ę̶͇̤̗̫͇̯̬͂̓̔l̷̪̬̞̘͍̜̔̑͒̔̀̋͌͐͜p̶̥̤̤̞̘͓̼̯̓͂́̏͘͝s̶̖̞̦̠͎͕͈͓̒͒̌͌̈́̂͗͜b̴̫̣͍̻̳̦͊͗̎͂̈v̵̗̣̹̽̅͊̈̈́͊̓̍͂͘͝į̵̞͙̰̠͉̹̬͙̍͑̒̓͛̾͋̒̑̀͛͜ư̵̝̾͝ŗ̶̡̢̛͈̤͖̣̞̖͓͇̇ͅh̷͕͉̪̘̖̎̓̓̓̎̅͝͠ğ̶̛̳̜̗̠͔̑̈̾͑̀͊͒̃͛̎͝ȏ̵̧͕͚̳̤͔̖͔̦̗̺͕͂͌͑̉͝͝ͅv̷̰̱̰͑͊b̵̢̧̧̨̤̤̫̲̬̳͚̏f̴͍̩͔̞͊̀͌̃̂͋̍̿̆̇̇"
+					console.log(numOfBooksPressed);
+					orderGameResult();
+				}
+			}
+			
+			display();
+		}
+		function display()
+		{
+			text1.innerHTML = userMsg;
+		}
+		function orderGameResult()
+		{
+			if (numOfBooksPressed == 3)
+			{
+				if (booksPressed == "twothreeone")
+				{
+					vaultOpen = "open";
+					numOfBooksPressed = 0;
+					booksPressed = "";
+				}
+				else
+				{
+					sessionStorage.Health--;
+					numOfBooksPressed = 0;
+					booksPressed = ""
+					userMsg = "All of a sudden, a heavy textbook hits you on the head! You take one damage. That was probably the wrong combination";
+					displayStats();
+				}
+			}
+			if (vaultOpen == "open")
+			{
+				userMsg = "With a clatter and a thunk, you see a star come down and out of the shute. Congrats, you now have a star!";
+				sessionStorage.foundStar2 = "true";
+				sessionStorage.starsFound++;
+				displayStats();
+			}
+			
+			display();
+		}
+		function investigate()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+			}
+			else
+			{
+				if (sessionStorage.foundStar3 == "true" && sessionStorage.redcoin3 == "found")
+				{
+					userMsg = "You've already found everything you can find here. Don't forget to check out the other rooms!"
+					displayStats();
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					console.log(randInt);
+					if (randInt == 100)
+					{
+						sessionStorage.starsFound++;
+						sessionStorage.foundStar3 = "true";
+						userMsg = "You found a power star. Wow! So lucky";
+						displayStats();
+					}
+					else
+					{
+						if (sessionStorage.redcoin3 == "found")
+						{
+							userMsg = "You couldn't find anything. Do you want to try again?"
+						}
+						else
+						{
+							if (randInt > 89)
+							{
+								userMsg = "You found a red coin! Good job"
+								sessionStorage.redcoin3 = "found";
+								sessionStorage.redcoinamount++;
+								displayStats();
+							}
+							else
+							{
+								if (randInt < 11)
+								{
+									userMsg = "One of the big textbooks falls out and hits you on the head. You take one damage"
+									sessionStorage.Health--;
+									displayStats();
+								}
+								else
+								{
+									userMsg = "You couldn't find anything. Do you want to try again?"
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			display();
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<div><img src = "images/open vault.jpg" /></div>
+		<div id ="infoTxt">You walk into a large library room and see nothing of note 
+		except for three books that seem to stick out. there is also a raised platfrom 
+		with a chute above it. Maybe something comes out of the chute by pressing the 
+		books in the right order? Alternatively, you can also search the library for 
+		something</div>
+		<a href = "mansionhall.html">Return to the hall</a>
+		<a href = "level 2 project.html">Restart</a>
+		<button onclick = "pressBook1();">Press book 1</button>
+		<button onclick = "pressBook2();">Press book 2</button>
+		<button onclick = "pressBook3();">Press book 3</button>
+		<button onclick = "investigate();">Search the library</button>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	</body>
+</html>

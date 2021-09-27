@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			sessionStorage.mansionhallTmpTxt = "";
+			ranInt = 0;
+			userMsg = "";
+			text1 = ""
+			text1 = document.getElementById("infoTxt")
+			if (sessionStorage.Staringcontest == "won" || sessionStorage.eyeBallStatus == "dead")
+			{
+				infoTxt.innerHTML = "The eyeball is nowhere to be seen. Where could it have gone?"
+			}
+		}
+		function display()
+		{
+			text1.innerHTML = userMsg
+		}
+		function stareContest()
+		{
+			console.log(sessionStorage.Staringcontest);
+			if (sessionStorage.Staringcontest == "won" || sessionStorage.eyeBallStatus == "dead")
+			{
+				userMsg = "You've already beaten the eyeball. It won't dare challenge you now";
+			}
+			else
+			{
+				if (sessionStorage.Health == 0)
+				{
+					userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					console.log(randInt);
+					/*
+					having this at 100 makes getting a star a lot harder, but perhaps it is too hard, so I'll leave it at 10% for now
+					if (randInt == 100)
+					*/
+					if (randInt > 89)
+					{
+						sessionStorage.starsFound++;
+						sessionStorage.foundStar3 = "true";
+						userMsg = "The eyeball explodes and splashes goo everywhere. Some of it even gets in your mouth. Disgusting! But wait, what's that inside of the eyeball's pile of goo? A star?! So cool!";
+						sessionStorage.Staringcontest = "won"
+						displayStats();
+					}
+					else
+					{
+						if (sessionStorage.redcoin4 == "found" && randInt > 11)
+						{
+							userMsg = "Your eyes begin to water, but so does the giant eyeball. You both blink at the same time. Nobody won or lost";
+						}
+						else
+						{
+							if (randInt > 69)
+							{
+								userMsg = "Your eyes water, but you are determined to hang on, even a millisecond longer than the eyeball. the eyeball blinks, but so do you. The eyeball rewards you with a red coin. How generous";
+								sessionStorage.redcoin4 = "found";
+								sessionStorage.redcoinamount++;
+								displayStats();
+							}
+							else
+							{
+								if (randInt < 11)
+								{
+									userMsg = "Your eyes begin to water and you blink, losing the staring contest. The eyeball shoots a blast of something at you as punishment. You take one damage";
+									sessionStorage.Staringcontest = "lost"
+									sessionStorage.Health--;
+									displayStats();
+								}
+								else
+								{
+									userMsg = "Your eyes begin to water, but so does the giant eyeball. You both blink at the same time. Nobody won or lost";
+								}
+							}
+						}
+					}
+				
+				}
+			}
+			
+			display();
+		}
+		function punchEye()
+		{
+			if (sessionStorage.foundStar4 == "true" || sessionStorage.eyeBallStatus == "dead")
+			{
+				userMsg = "You've already beaten the eyeball. Punching it now would be cruel";
+			}
+			else
+			{
+				if (sessionStorage.Health == 0)
+				{
+					userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					console.log(randInt);
+					if (randInt > 79)
+					{
+						sessionStorage.starsFound++;
+						sessionStorage.foundStar4 = "true";
+						userMsg = "You punch the eyeball and it explodes and splashes goo everywhere. Some of it even gets in your mouth. Disgusting! But wait, what's that inside of the eyeball's pile of goo? A star?! So cool!";
+						sessionStorage.Staringcontest = "won";
+						sessionStorage.eyeBallStatus = "dead";
+						sessionStorage.eyeBallHealth = sessionStorage.eyeBallHealth - 3;
+						displayStats();
+					}
+					else
+					{
+						if (sessionStorage.redcoin4 == "found" && randInt > 59)
+						{
+							userMsg = "You punch the eyeball and deal 1 damage";
+							sessionStorage.eyeBallHealth--;
+							if (sessionStorage.eyeBallHealth == 0 || sessionStorage.eyeBallHealth > 0)
+							{
+								sessionStorage.starsFound++;
+								sessionStorage.foundStar4 = "true";
+								userMsg = "You punch the eyeball and it explodes and splashes goo everywhere. Some of it even gets in your mouth. Disgusting! But wait, what's that inside of the eyeball's pile of goo? A star?! So cool!";
+								sessionStorage.Staringcontest = "won";
+								sessionStorage.eyeBallStatus = "dead";
+								displayStats();
+							}
+						}
+						else
+						{
+							if (randInt < 11)
+							{
+								userMsg = "You were off balance and only struck a glancing blow. The eyeball retailiates before you have a chance to recover. You take one damage";
+								sessionStorage.Health--;
+								displayStats();
+							}
+							else
+							{
+								userMsg = "Neither of you found an opening in the other's guard. Nobody made a move";
+							}
+						}
+					}
+				
+				}
+			}
+			display();
+		}
+		function giveHug()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue";
+			}
+			else
+			{
+				console.log(sessionStorage.eyeBallattacked)
+				console.log(sessionStorage.numHugsGiven)
+				if(sessionStorage.eyeBallattacked == true)
+				{
+					userMsg = "You have already attacked the eyeball and as such, it will not let you approach";
+				}
+				else
+				{	
+					console.log(sessionStorage.numHugsGiven);
+					if (sessionStorage.numHugsGiven == 0)
+					{
+					userMsg = "You walk over to the giant eyeball and give it a hug. The eyeball is unsure what to do at this point since you're supposed to be enemies. The eyeball seems to be slightly happier now and gives you a red coin";
+					sessionStorage.redcoinamount++;
+					sessionStorage.redcoin4 = "found";
+					sessionStorage.numHugsGiven++;
+					displayStats();
+					}
+					else
+					{
+						if (sessionStorage.numHugsGiven == 1)
+						{
+						userMsg = "You walk over to the giant eyeball and give it another hug. The eyeball is still slightly unsure at what you're doing but acceptes it";
+						sessionStorage.numHugsGiven++;
+						displayStats();
+						}
+						else
+						{
+							if (sessionStorage.numHugsGiven == 2)
+							{
+							userMsg = "You walk over to the giant eyeball and give it another hug. The eyeball is still a little confused but doesn't seem to mind anymore";
+							sessionStorage.numHugsGiven++;
+							displayStats();
+							}
+							else
+							{
+								if (sessionStorage.numHugsGiven == 3)
+								{
+								userMsg = "You walk over to the giant eyeball and give it another hug. The eyeball is now more comfortable with what you are doing.";
+								sessionStorage.numHugsGiven++;
+								displayStats();
+								}
+								else
+								{
+									if (sessionStorage.numHugsGiven == 4)
+									{
+									userMsg = "You walk over to the giant eyeball and give it another hug. The eyeball is still slightly unsure at what you're doing but acceptes it";
+									sessionStorage.numHugsGiven++;
+									displayStats();
+									}
+									else
+									{
+										if (sessionStorage.numHugsGiven == 5)
+										{
+										userMsg = "You walk over to the giant eyeball and give it another hug. The eyeball blushes and gives you a star. Wow! Being a good person was the smart decision after all!";
+										sessionStorage.numHugsGiven++;
+										sessionStorage.starsFound++;
+										sessionStorage.foundStar4 = "true";
+										displayStats();
+										}
+										else
+										{
+											if (sessionStorage.numHugsGiven == 6)
+											{
+											userMsg = "It isn't wise to press your luck anymore. This is a haunted mansion after all";
+											sessionStorage.numHugsGiven++;
+											displayStats();
+											}
+											else
+											{
+												if (sessionStorage.numHugsGiven == 7)
+												{
+												userMsg = "It isn't wise to press your luck anymore. This is a haunted mansion after all";
+												sessionStorage.numHugsGiven++;
+												sessionStorage.mansionhallTmpTxt = "You blink and suddenly find yourself in the main hall. How did you get here?";
+												sessionStorage.foundStar4 = "true"
+												sessionStorage.door3locked = "true";
+												window.location.href = "mansionhall.html";
+												displayStats();
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				display();
+			}
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<div><img src = "images/Room 3.png" /></div>
+		<a href = "mansionhall.html">Return to the hall</a>
+		<a href = "level 2 project.html">Restart</a>
+		<div id = "infoTxt">You immediately notice the giant floating eyeball as you walk into the third room. 
+		It just floats there, watching your every move</div>
+		<button onclick = "stareContest();">Have a staring contest with the eyeball</button>
+		<button onclick = "punchEye();">Punch the eyeball</button>
+		<button onclick = "giveHug();">Be a good person and give the lonely eyeball a hug</button>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	</body>
+</html>

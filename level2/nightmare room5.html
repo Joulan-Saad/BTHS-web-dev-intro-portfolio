@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			displayStats();
+			sessionStorage.mansionhallTmpTxt = "You burst through the door and suddenly find yourself back in the mansion's hall. It seems you came from door number 5, but as you turn back to it, it slams itself shut and locks itself again. It seems you can't go back through.";
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<div><img src = "images/spoopy boi.jpg" /></div>
+		<div>...This room is still scary, but compared to the room before this one, this is nothing. You laugh in his face and go through the next door.</div>
+		<a href = "level 2 project.html">Restart</a>
+		<a href = "mansionhall.html">next room</a>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	</body>
+</html>

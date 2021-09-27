@@ -1,0 +1,48 @@
+a 
+{
+	font: bold 11px Arial;
+	text-decoration: none;
+	background-color: #EEEEEE;
+	color: #333333;
+  	padding: 2px 6px 2px 6px;
+	border-top: 1px solid #CCCCCC;
+  	border-right: 1px solid #333333;
+  	border-bottom: 1px solid #333333;
+  	border-left: 1px solid #CCCCCC;
+}
+body
+{
+	background-color: lightblue
+}
+img
+{
+	width:100%;
+}
+#redCoinsFound
+{
+	color:navy;
+}
+#healthText
+{
+	color:red;
+}
+#red
+{
+	color:red;
+}
+#navy
+{
+	color:navy;
+}
+#redCoinsFound
+{
+	color:navy;
+}
+#green
+{
+	color:green
+}
+#foundStars
+{
+	color:green
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			sessionStorage.mansionhallTmpTxt = "";
+			booTxt1 = ""
+			booTxt1 = document.getElementById("booTxt");
+			redPotionClick = 0;
+			buyStarClick = 0;
+			teleporterClick = 0;
+			sessionStorage.numStoreVisit++
+			buyStarClick = 0;
+			teleporterClick = 0;
+			redPotionClick = 0;
+			randInt = 0
+			pinkDudeTxt = ""
+			pinkDudeTxt = document.getElementById("pinkGuyTxt")
+			displayStats();
+			if (sessionStorage.numStoreVisit > 1)
+			{
+				booTxt1.innerHTML = "Boo: *cackles* Welcome to my shop human! *cackles* See what you need! And don't mind that little pink guy over there. He's friendly....I think"
+			}
+		}
+		function buyRedPotion()
+		{
+			buyStarClick = 0;
+			teleporterClick = 0;
+			redPotionClick++;
+			if (redPotionClick == 1)
+			{
+				booTxt1.innerHTML = "Boo: Ah yes, the potion of healing that I sto- er, i mean made myself. Guaranteed to heal you up to maximum health. Would you like to buy it? It's only 2 red coins";
+			}
+			else
+			{
+				if (sessionStorage.redcoinamount > 2 || sessionStorage.redcoinamount == 2)
+				{
+					sessionStorage.redcoinamount--;
+					sessionStorage.redcoinamount--;
+					sessionStorage.Health = 5;
+					displayStats();
+					booTxt1.innerHTML = "Boo: Thanks for buying from me. *cackles*"
+				}
+				else
+				{
+					booTxt1.innerHTML = "You don't have enough money. Come back with at least 2 red coins for this one."
+				}
+			}
+		}
+		function buyStar()
+		{
+			redPotionClick = 0;
+			teleporterClick = 0;
+			buyStarClick++
+			if (buyStarClick == 1)
+			{
+				booTxt1.innerHTML = "Boo: Shiny isn't it? Pretty useless to me but hey, if you want it, it's 3 red coins";
+			}
+			else
+			{
+				if (sessionStorage.redcoinamount > 3 || sessionStorage.redcoinamount == 3)
+				{
+					sessionStorage.redcoinamount--;
+					sessionStorage.redcoinamount--;
+					sessionStorage.redcoinamount--;
+					sessionStorage.starsFound++;
+					displayStats();
+					booTxt1.innerHTML = "Boo: Thanks for buying from me. *cackles*"
+				}
+				else
+				{
+					booTxt1.innerHTML = "You don't have enough money. Come back with at least 3 red coins for this one."
+				}
+			}
+		}
+		function buyRandomTeleporter()
+		{
+			redPotionClick = 0;
+			buyStarClick = 0;
+			teleporterClick++
+			if (teleporterClick == 1)
+			{
+				booTxt1.innerHTML = "Boo: Umm, yeah, I don't know if you want that one. It's pretty unreliable. But it's only a single red coin if you want it. And just so you say I didn't warn you, it'll teleport you immediately";
+			}
+			else
+			{
+				if (sessionStorage.redcoinamount > 1 || sessionStorage.redcoinamount == 1)
+				{
+					sessionStorage.redcoinamount--;
+					displayStats();
+					booTxt1.innerHTML = "Boo: Thanks for buying from me. *cackles*"
+					randomTeleport();
+				}
+				else
+				{
+					booTxt1.innerHTML = "You don't have enough money. Come back with at least 1 red coin for this one."
+				}
+			}
+		}
+		function petPinkGuy()
+		{
+			pinkDudeTxt.innerHTML = "Although it's unclear what exactly it is, the little pink creature seems to appreciates your patting"
+		}
+		function randomTeleport()
+		{
+			randInt = getRandomInteger(1, 100);
+			console.log(randInt);
+			if (randInt > 89)
+			{
+				window.location.href = "beach.html"
+			}
+			else
+			{
+				window.location.href = "nightmare room.html"
+			}
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<div><img src = "images/boo's shop.png" /></div>
+		<a href = "entrance.html">Return to the entrance</a>
+		<a href = "level 2 project.html">Restart</a>
+		<div id = "booTxt">Boo (the name of the ghost guy over there): *cackles* Welcome to my shop human! *cackles* See what you need! And don't mind that little pink guy over there. He's friendly....I think</div>
+		<button onclick = "buyRedPotion();">Red Potion</button>
+		<button onclick = "buyStar();">Star</button>
+		<button onclick = "buyRandomTeleporter();">Random teleporter</button>
+		<button onclick = "petPinkGuy();">Pet the little pink dude</button>
+		<div id = "pinkGuyTxt"></div>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	</body>
+</html>

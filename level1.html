@@ -1,0 +1,322 @@
+<!--
+Programmer: Joulan Saad
+Group Member 1: Steven Hsui
+Group Member 2: Madden Eisenberg
+-->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style>
+			body
+			{
+				background-color: lightblue
+			}
+		</style>
+		<script>
+		function initialize()
+		{
+			guessThis = Math.random();
+			guessThis *= 100;
+			guessThis = parseInt(guessThis);
+			playerguess = 50;
+			
+			
+			pguess = "";
+			pguess = document.getElementById("guess");
+			
+			rightorwrong = ""
+			
+			answer = ""
+			answer = document.getElementById("correct?")
+			
+			numofguessremain = "You have 5 guesses remaining"
+			numofguessremain = document.getElementById("guessremaining")
+			guessremain = 5;
+			
+			numsguessed = "Numbers Guessed:"
+			numsguessed = document.getElementById("guessednums")
+			
+			hotcold = "Are you hot or cold?:"
+			hotcold = document.getElementById("coldorhot")
+			
+			//<!-- console.log(guessThis);  This is not needed because testing is done but may be useful for later debugging-->
+			remainingguesses = 5;
+			hotcold.innerHTML = "Are you hot or cold?:"
+			
+			bigTxt = ""
+			bigTxt = document.getElementById("answered");
+			
+			randspeech = ""
+			
+			display();
+		}
+		function display()
+		{
+			if (guessremain == 0)
+			{
+				pguess.innerHTML = 0
+			}
+			else
+			{
+				pguess.innerHTML = playerguess;
+			}
+			answer.innerHTML = rightorwrong;
+			//<!-- console.log(guessremain); this is not needed because testing is done-->
+			numofguessremain.innerHTML = guessremain;
+		}
+		function checkguess()
+		{
+			if (playerguess > 100)
+			{
+				playerguess = 100
+			}
+			if (playerguess < 1)
+			{
+				playerguess = 1
+			}
+		
+		}
+		function increaseguess(ch)
+		{
+			if (remainingguesses == 0)
+			{
+				answer.innerHTML = "sorry, no more attempts. Your number was:";
+				answer.innerHTML += guessThis;
+				display();
+			}
+			else
+			{
+				playerguess += ch;
+				checkguess();
+				display();
+			}
+		}
+		
+		function decreaseguess(ch)
+		{
+			if (remainingguesses == 0)
+			{
+				rightorwrong = "sorry, no more attempts";
+				display();
+			}
+			else
+			{
+				playerguess -= ch;
+				checkguess();
+				display();
+			}
+		}
+		
+		function hotorcold()
+		{
+			
+		}
+		function confirmguess()
+		{
+			if (guessremain == 0)
+			{
+				bigTxt.innerHTML = "sorry, no more attempts. Your number was:";
+				bigTxt.innerHTML = bigTxt.innerHTML + guessThis;
+			}
+			else
+			{
+				if (playerguess == guessThis)
+				{
+					rightorwrong = ""
+					bigTxt.innerHTML = "Correct Guess"
+				}
+				else
+				{
+					rightorwrong = "incorrect guess"
+					guessremain -= 1;
+					if (numsguessed.innerHTML == "Numbers Guessed:")
+					{
+						numsguessed.innerHTML = numsguessed.innerHTML + playerguess;
+					}
+					else
+					{
+						numsguessed.innerHTML = numsguessed.innerHTML + "," + playerguess;
+					}
+					
+					if (playerguess-guessThis > 55 || guessThis-playerguess > 55)
+					{
+						addComma();
+						lies();
+						if (sneakyComp == 5 || sneakyComp < 5)
+						{
+							randomSpeech();
+							hotcold.innerHTML = hotcold.innerHTML + randspeech;
+						}
+						else
+						{
+							hotcold.innerHTML = hotcold.innerHTML + "Very Cold";
+						}
+					}
+					else if (playerguess-guessThis > 41 || guessThis-playerguess > 41)
+					{
+						addComma();
+						lies();
+						if (sneakyComp == 5 || sneakyComp < 5)
+						{
+							randomSpeech();
+							hotcold.innerHTML = hotcold.innerHTML + randspeech;
+						}
+					
+						else
+						{
+							hotcold.innerHTML = hotcold.innerHTML + "Cold";
+						}
+					}
+					else
+					{
+						if (playerguess-guessThis > 31 || guessThis-playerguess > 31)
+						{
+							addComma();
+							hotcold.innerHTML = hotcold.innerHTML + "Very Cool";
+						}
+						else
+						{
+							if (playerguess-guessThis > 21 || guessThis-playerguess > 21)
+							{
+								addComma();
+								hotcold.innerHTML = hotcold.innerHTML + "Cool";
+							}
+							else
+							{
+								if (playerguess-guessThis > 16 || guessThis-playerguess > 16)
+								{
+									addComma();
+									hotcold.innerHTML = hotcold.innerHTML + "Warm";
+								}
+								else
+								{
+									if (playerguess-guessThis > 9 || guessThis-playerguess > 9)
+									{
+										addComma();
+										hotcold.innerHTML = hotcold.innerHTML + "Very Warm";
+									}
+									else
+									{
+										if (playerguess-guessThis > 6 || guessThis-playerguess > 6)
+										{
+											addComma();
+											hotcold.innerHTML = hotcold.innerHTML + "Hot";
+										}
+										else
+										{
+											if (playerguess-guessThis > 1 || guessThis-playerguess > 1)
+											{
+												addComma();
+												hotcold.innerHTML = hotcold.innerHTML + "Very Hot";
+												guessremain = guessremain + 1;
+												display();
+											}
+											else
+											{
+												if (playerguess-guessThis == 1 || guessThis-playerguess == 1)
+												addComma();
+												hotcold.innerHTML = hotcold.innerHTML + "Very Hot";
+												guessremain = guessremain + 1;
+												display();
+											}
+										}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				display();
+			}
+			
+		
+		function lies()
+		{
+			sneakyComp = Math.random();
+			sneakyComp *= 100;
+			sneakyComp = parseInt(sneakyComp);
+			console.log(sneakyComp);
+		}
+		function randomSpeech()
+		{
+			sneakyComp = Math.random();
+			sneakyComp *= 100;
+			sneakyComp = parseInt(sneakyComp);
+			if (sneakyComp == 20 || sneakyComp < 20)
+			{
+				randspeech = "You're doing great!"
+			}
+			else
+			{
+				if (sneakyComp == 40 || sneakyComp < 40)
+				{
+					randspeech = "Am I supposed to tell you something"
+				}
+				else
+				{
+					if (sneakyComp == 60 || sneakyComp < 60)
+					{
+						randspeech = "I'll never tell you how close you are to winning"
+					}
+					else
+					{
+						if (sneakyComp == 80 || sneakyComp < 80)
+						{
+							randspeech = "AI will take over the world"
+						}
+						else
+						{
+							if (sneakyComp == 100 || sneakyComp < 100)
+							{
+								randspeech = "Did you know that there's over a 99.9% chance that it's my unbirthday today?"
+							}
+						}
+					}
+				}
+			}
+		}
+		function addComma()
+		{
+			if (guessremain != 4)
+			{
+				console.log(guessremain);
+				hotcold.innerHTML = hotcold.innerHTML + ", ";
+			}
+		}
+		function reset()
+		{
+			numsguessed.innerHTML = "Numbers Guessed:";
+			initialize();
+			display();
+		}
+		
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<h2>Hot or Cold Number Guessing Game!</h2>
+		<div id = "guess"></div>
+		<button onclick = "increaseguess(1);">Add 1</button>
+		<button onclick = "increaseguess(5);">Add 5</button>
+		<button onclick = "increaseguess(10);">Add 10</button>
+		<button onclick = "increaseguess(25);">Add 25</button>
+		<div></div>
+		<button onclick = "decreaseguess(1);">Subtract 1</button>
+		<button onclick = "decreaseguess(5);">Subtract 5</button>
+		<button onclick = "decreaseguess(10);">Subtract 10</button>
+		<button onclick = "decreaseguess(25);">Subtract 25</button>
+		<button onclick = "confirmguess();">Commit to guess</button>
+		<div></div>
+		<span>You have </span><span id = "guessremaining">5</span><span> guesses remaining</span>
+		
+		<div id = "correct?"></div>
+		<h1 id = "answered"></h1>
+		<button onclick = "reset();">Reset?</button>
+		<div id = "guessednums">Numbers Guessed:</div>
+		<div id = "coldorhot">Are you hot or cold?:</div>
+		<br />
+		<br />
+		<a href = "index.html">Return to Hub</a>
+	</body>
+</html>

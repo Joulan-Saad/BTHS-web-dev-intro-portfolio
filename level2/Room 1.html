@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			sessionStorage.mansionhallTmpTxt = ""
+			randInt = 0;
+			text1 = ""
+			text1 = document.getElementById("infoText");
+			userMsg = ""
+			displayStats();
+		}
+		function investigate()
+		{
+			displayStats();
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue"
+			}
+			else
+			{
+				if (sessionStorage.foundStar1 == "true" && sessionStorage.redcoin2 == "found")
+				{
+					userMsg = "You've already found everything you can find here. Don't forget to check out the other rooms!"
+					displayStats();
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					console.log(randInt);
+					if (randInt == 100)
+					{
+						sessionStorage.starsFound++;
+						sessionStorage.foundStar1 = "true";
+						userMsg = "You found a star. Wow! So lucky."
+						display();
+						displayStats();
+					}
+					else
+					{
+						if (sessionStorage.redcoin2 == "found")
+						{
+							userMsg = "You couldn't find anything. Do you want to try again?";
+						}
+						else
+						{
+							if (randInt > 89)
+							{
+								userMsg = "You found a red coin! Good job"
+								sessionStorage.redcoin2 = "found";
+								sessionStorage.redcoinamount++;
+								display();
+								displayStats();
+							}
+							else
+							{
+								userMsg = "You couldn't find anything. Do you want to try again?";
+							}
+						}
+					}
+				}
+			}
+			
+			display();
+		}
+		function playPiano()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue"
+			}
+			else
+			{
+				if (sessionStorage.redcoin1 == "found")
+				{
+					tmpTxt = "You've already gotten a red coin from the piano. It's not wise to press your luck"
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					/*
+					no need for this. testing done. keep for future tests if necessary.
+					console.log(randInt);
+					*/
+					if (randInt > 59)
+					{
+						userMsg = "You play the piano like a pro and all of a sudden, a red coin pops out of the piano"
+						sessionStorage.redcoin1 = "found";
+						sessionStorage.redcoinamount++;
+						display();
+						displayStats();
+					}
+					else
+					{
+						userMsg = "The piano reveals a sharp set of teeth and bites you for your horrid music. You take one damage";
+						sessionStorage.Health--;
+						displayStats();
+						display();
+					}
+				}
+			}
+		}
+		function display()
+		{
+			if (sessionStorage.Health == 0)
+			{
+				userMsg = "You've run out of health. You have died. Press the restart button to continue"
+			}
+			infoText.innerHTML = userMsg;
+		}
+		/*
+		function AddStar()
+		{
+			sessionStorage.starsFound++;
+			sessionStorage.foundStar1 = "true";
+			userMsg = "You found a star. Wow! So lucky."
+			display();
+			displayStats();
+		}
+		For testing purposes only
+		Adds star to player count
+		*/
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<div><img src = "images/Room 1.jpg" /></div>
+		<a href = "mansionhall.html">Return to the hall</a>
+		<button onclick = "investigate();">Search the room for something</button>
+		<button onclick = "playPiano();">Attempt to play the piano</button>
+		<div id = "infoText">You walk into a decently size room with a piano and a chair in one corner. 
+		You see no doors other than the one you came through. What do you do?</div>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+		<a href = "level 2 project.html">Restart</a>
+		<!--
+		<button onclick = "AddStar();"></button>
+		Only exists for testing purposes
+		-->
+	</body>
+</html>

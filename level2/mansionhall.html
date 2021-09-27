@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style>
+		</style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			displayStats();
+			tmpTxt = document.getElementById("text1");
+			tmpTxt.innerHTML = sessionStorage.mansionhallTmpTxt
+			starNum = document.getElementById("foundStars");
+			link1 = document.getElementById("room5link");
+			roomlink3 = document.getElementById("room3link")
+			
+		}
+		function haveKey5()
+		{
+			if (sessionStorage.room5key == "found")
+			{
+				link1.href = "Room 5.html"
+			}
+			else
+			{
+				sessionStorage.mansionhallTmpTxt = "That door is locked, you cannot go through there at this time."
+				link1.href = "mansionhall.html"
+			}
+		}
+		function haveKey4()
+		{
+			/*
+			The next if statement may not use the room4key variable, but it is there if i need it.
+			*/
+			if (sessionStorage.room4key == "found" || sessionStorage.starsFound == 2 || sessionStorage.starsFound > 2)
+			{
+				link1.href = "Room 4.html"
+			}
+			else
+			{
+				sessionStorage.mansionhallTmpTxt = "That door is locked, you cannot go through there at this time."
+				room4link.href = "mansionhall.html"
+			}
+		}
+		function isDoor3Locked()
+		{
+			if (sessionStorage.door3locked == "true")
+			{
+			sessionStorage.mansionhallTmpTxt = "As you attempt to push open the door, something pushes the door closed. You can't get through"
+			roomlink3.href = "mansionhall.html"
+			}
+			else
+			{
+				roomlink3.href = "Room 3.html";
+			}
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+	<div><img src = "images/mansionhall.png" /><div>
+	<div>The hall you enter into contains 5 doorways. Room 4 has a star symbol with a 2 on it. Room 5 seems to be locked by the good old fashioned lock and key</div>
+	<div id = "text1"></div>
+	<a href = "entrance.html">Leave the mansion</a>
+	<a href = "Room 1.html">Room 1</a>
+	<a href = "Room 2.html">Room 2</a>
+	<a onclick = "isDoor3Locked();" id = "room3link" href = "Room 3.html">Room 3</a>
+	<a onclick = "haveKey4()" href = "Room 4.html" id = "room4link">Room 4</a>
+	<a  onclick = "haveKey5();" href = "Room 5.html" id = "room5link">Room 5</a>
+	<div id = "red">Health:<span id = "healthText">5</span></div>
+	<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+	<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	<a href = "level 2 project.html">Restart</a>
+	<!--
+	Button to room 4 used for testing purposes. No need for it now
+	<a href = "Room 4.html"></a>
+	-->
+	</body>
+</html>

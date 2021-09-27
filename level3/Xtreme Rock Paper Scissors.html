@@ -1,0 +1,642 @@
+<!--
+to do list:
+Fix the craft buttons so that you can't craft into the negative values.    Update: should be fixed
+Fix restart button so that the tom and jerry left side pic shows up.     Update: Should be fixed
+Fix the update log command so that restarting does not delete the info parts of it when no rounds have happened.    Update: Should be fixed
+Fix bug that lets you craft into the negative when only one material is at 0
+-->
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style>
+		table
+		{
+			border: thick solid gray;
+			border-collapse:collapse;
+			width: 25%;
+		}
+		th, td
+		{
+			border: thin solid black;
+			padding:8px;
+			width: 50%;
+		}
+		body
+		{
+			background-color:cornflowerblue;
+		}
+		#centerEverything
+		{
+			margin:0 auto;
+			width:50%;
+		}
+		</style>
+		<script src = "utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			//debugger;
+			//
+			//
+			//These initialize the value for the player's arsenal
+			p1rocknum = 5;
+			p1papernum = 5;
+			p1scissorsnum = 5;
+			
+			//These initialize the value for the computer's arsenal
+			comprocknum = 5;
+			comppapernum = 5;
+			compscissorsnum = 5;
+			
+			//These initialize the value for variables that keep track of what each player choose each round
+			p1weaponchoice = "";
+			compweaponchoice = "";
+			
+			//literally just the log
+			log = "";
+			//Keeping track of how many turns have passed
+			numRounds = 0;
+			
+			//the SAT (Sports Announcer Text) variable is to make it fast for me to set the value of narrator text so i dont have to type it out all the time
+			narratorText = "";
+			narratorText = document.getElementById("annoyingSportsAnnouncerText");
+			SAT = "";
+			roundWinner = "";
+			
+			//Variables to update the pictures to show which weapons have been chosen
+			p1battlechoice = "";
+			compbattlechoice = "";
+			p1battlechoice = document.getElementById("p1weaponpic");
+			compbattlechoice = document.getElementById("compweaponpic");
+			p1weapon = "";
+			chosencompweapon = "";
+			
+			//Updates the display with all the necessary info
+			initialDisplay();
+			
+			//We need something to keep track of how many times the user has used something in a row
+			oldWeaponPlayed = "";
+			sameWeapon = 0;
+			
+			//game over?
+			gameOver = false
+			p1WonOrLost = "N/A"
+		}
+		
+		//Only to be used in initialize because display adds a row to the log whenever it is called, but we don't want that when the page is loaded so we have this
+		function initialDisplay()
+		{
+			//debugger;
+			p1stats.innerHTML = "Player's arsenal: Rocks: " + p1rocknum + " Paper: " + p1papernum + " Scissors: " + p1scissorsnum;
+			compstats.innerHTML = "Computer's arsenal: Rocks: " + comprocknum + " Paper: " + comppapernum + " Scissors: " + compscissorsnum;
+			p1weapon = "images/t&j.jpg";
+			compweaponpic.src = "images/t&j 2.jpg";
+			
+		}
+		function restart()
+		{
+			debugger;
+			gameOver = true;
+			resetDisplay();
+			initialize();
+			display();
+			numRounds--;
+			initialDisplay();
+			document.getElementById("combatLog").deleteRow(-1);
+		}
+		function resetDisplay()
+		{
+			debugger;
+			annoyingSportsAnnouncerText.innerHTML = ""
+			for (var i = 0; i < numRounds; i++)
+			{
+				//testing done. no need for these
+				//console.log(i);
+				//console.log(numRounds);
+				document.getElementById("combatLog").deleteRow(-1);
+			}
+		}
+		function display()
+		{
+			//debugger;
+			//
+			//
+			//Updating this in the display is easier than sticking it everywhere since the display function is called anyway
+			numRounds++; 
+			testForLoss();
+			p1stats.innerHTML = "Player's arsenal: Rocks: " + p1rocknum + " Paper: " + p1papernum + " Scissors: " + p1scissorsnum;
+			compstats.innerHTML = "Computer's arsenal: Rocks: " + comprocknum + " Paper: " + comppapernum + " Scissors: " + compscissorsnum;
+			
+			//Updates narrator text
+			narratorText.innerHTML = SAT;
+			updateLog();
+			
+			if(gameOver == true)
+			{
+				
+			}
+			else
+			{
+				//updates the pictures for the battle scene
+				p1battlechoice.src = p1weapon;
+				compbattlechoice.src = chosencompweapon;
+			}
+		}
+		function testForLoss()
+		{
+		//debugger;
+			if (p1rocknum == 0 && p1papernum == 0 || p1rocknum == 0 && p1scissorsnum == 0 || p1scissorsnum == 0 && p1papernum == 0)
+			{
+				gameOver = true;
+				p1WonOrLost = "lost";
+				SAT = "It looks like you only have one weapon left. It's impossible to win with only a single weapon, so you have lost. Press restart to play again!";
+				p1weaponpic = "images/explode.gif"
+			}
+			if (p1rocknum == 0 && p1scissorsnum == 0 && p1papernum == 0)
+			{
+				gameOver = true;
+				p1WonOrLost = "lost";
+				SAT = "You've run out of weapons. You have lost and cannot continue. Press restart to play again";
+				p1weaponpic = "images/explode.gif"
+			}
+			if (comprocknum == 0 && comppapernum == 0 || comprocknum == 0 && compscissorsnum == 0 || compscissorsnum == 0 && comppapernum == 0)
+			{
+				gameOver = true;
+				p1WonOrLost = "won";
+				SAT = "It looks like the computer only has one weapon left. It's impossible to win with only a single weapon, so you have won!!! Press restart to play again!";
+				compweaponpic = "images/explode.gif"
+			}
+			if (p1rocknum == 0 && p1scissorsnum == 0 && p1papernum == 0)
+			{
+				gameOver = true;
+				p1WonOrLost = "won";
+				SAT = "The computer has run out of weapons. You've won!!!. Press restart to play again!";
+				compweaponpic = "images/explode.gif"
+			}
+			//If the game is over, this bit sees who lost and transfers all available weapons to the other person
+			if (gameOver == true)
+			{
+				if (p1WonOrLost == "won")
+				{
+					for (var i = 0; i < comprocknum; i++)
+					{
+						comprocknum--;
+						p1rocknum++;
+					}
+					for (var i = 0; i < comppapernum; i++)
+					{
+						comppapernum--;
+						p1papernum++;
+					}
+					for (var i = 0; i < compscissorsnum; i++)
+					{
+						compscissorsnum--;
+						p1scissors++;
+					}
+				}
+				if (p1WonOrLost == "lost")
+				{
+					for (var x = 0; x < p1rocknum; x++)
+					{
+						p1rocknum--;
+						comprocknum++;
+					}
+					for (var i = 0; i < p1papernum; i++)
+					{
+						p1papernum--;
+						comppapernum++;
+					}
+					for (var i = 0; i < p1scissorsnum; i++)
+					{
+						p1scissorsnum--;
+						compscissorsnum++;
+					}
+				}
+			}
+		}
+		function updateLog()
+		{
+			//debugger;
+			//Updates to the log:
+			var newRow = combatLog.insertRow();
+			//new row cell 1
+			var newcell = newRow.insertCell();
+			newcell.innerHTML = numRounds;
+			//new row cell 2
+			newcell = newRow.insertCell();
+			newcell.innerHTML = roundWinner;
+		}
+		function useWeapon(p1weapontype)
+		{
+			//debugger;
+			if (gameOver)
+			{
+				 //wow, such empty
+			}
+			else
+			{
+				var compWeapon = chooseCompWeapon();
+				//The following section would've been placed into a seperate function, but the way the weapon is chosen 
+				//is through input from the button brought in through the temp variable p1weapontype
+				var haveWeapon = true
+				if (p1weapontype == "rock" && p1rocknum == 0)
+				{
+					SAT = "Oh dear, it looks like you don't have any of that weapon left. Choose another";
+					roundWinner = "Round doesn't count, no more rocks available";
+					haveWeapon = false
+				}
+				if (p1weapontype == "paper" && p1papernum == 0)
+				{
+					SAT = "Oh dear, it looks like you don't have any of that weapon left. Choose another";
+					roundWinner = "Round doesn't count, no more paper available";
+					haveWeapon = false
+				}
+				if (p1weapontype == "scissors" && p1scissorsnum == 0)
+				{
+					SAT = "Oh dear, it looks like you don't have any of that weapon left. Choose another";
+					roundWinner = "Round doesn't count, no more scissors available";
+					haveWeapon = false
+					p1weapon = "images/slashed circle.png";
+				}
+				
+				//Now that we tested if we have the weapon we're trying to use, we can go ahead and determine whether or not
+				//to run the code that says we fight
+				if(!haveWeapon)
+				{
+					display();
+				}
+				else
+				{	
+					//Now we test to see if we used the same weapon 3 times in a row already
+					if (oldWeaponPlayed == p1weapontype)
+					{
+						sameWeapon++;
+						if (sameWeapon > 3)
+						{
+							sameWeapon = 0
+							if (p1weapontype == "rock")
+							{
+								p1rocknum--;
+								SAT = "Oh dear, it looks like your weapon broke from using it too much in a row. Use another.";
+								roundWinner = "Round doesn't count, weapon broke";
+								p1weapon = "images/explode.gif";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+								//
+								//
+								//
+								//Need to make it so that the code runs the battle code if the weapon doesn't actually break
+								//
+								//
+								//
+								//
+							}
+							if (p1weapontype == "paper")
+							{
+								p1papernum--;
+								SAT = "Oh dear, it looks like your weapon broke from using it too much in a row. Use another.";
+								roundWinner = "Round doesn't count, weapon broke";
+								p1weapon = "images/explode.gif";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							if (p1weapontype == "scissors")
+							{
+								p1scissorsnum--;
+								SAT = "Oh dear, it looks like your weapon broke from using it too much in a row. Use another.";
+								roundWinner = "Round doesn't count, weapon broke";
+								p1weapon = "images/explode.gif";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+						}
+						else
+						{
+							//This one is in case of a tie
+							if (p1weapontype == compWeapon)
+							{
+								oldWeaponPlayed = p1weapontype;
+								SAT = "OHHHH!!! LOOKS LIKE THEY PLAYED THE SAME WEAPON! WOW! WHAT ARE THE ODDS OF THAT? Neither player loses a weapon."
+								roundWinner = "Tie";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							//these 3 are for the player victory
+							if (p1weapontype == "rock" && compWeapon == "scissors")
+							{	
+								oldWeaponPlayed = p1weapontype;
+								p1scissorsnum++;
+								compscissorsnum--;
+								SAT = "ROCK BEATS SCISSORS!!! The player gains the opponent's scissors!";
+								roundWinner = "Player Win. Rock beats scissors";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							if (p1weapontype == "paper" && compWeapon == "rock")
+							{
+								oldWeaponPlayed = p1weapontype;
+								p1rocknum++;
+								comprocknum--;
+								SAT = "PAPER BEATS ROCK!!! The player gains the opponent's rock!";
+								roundWinner = "Player win. Paper beats rock";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							if (p1weapontype == "scissors" && compWeapon == "paper")
+							{
+								oldWeaponPlayed = p1weapontype;
+								p1papernum++;
+								comppapernum--;
+								SAT = "SCISSORS BEATS PAPER!!! The player gains the opponent's paper!";
+								roundWinner = "Player win. Scissors beats paper";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							//these 3 are for the computer victory
+							if (compWeapon == "rock" && p1weapontype == "scissors")
+							{
+								oldWeaponPlayed = p1weapontype;
+								compscissorsnum++;
+								p1scissorsnum--;
+								SAT = "ROCK BEATS SCISSORS!!! The opponent gains the player's scissors!";
+								roundWinner = "Computer win. Rock beats scissors";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							if (compWeapon == "paper" && p1weapontype == "rock")
+							{
+								oldWeaponPlayed = p1weapontype;
+								comprocknum++;
+								p1rocknum--;
+								SAT = "PAPER BEATS ROCK!!! The opponent gains the player's rock!";
+								roundWinner = "Computer win. Paper beats rock";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+							if (compWeapon == "scissors" && p1weapontype == "paper")
+							{
+								oldWeaponPlayed = p1weapontype;
+								comppapernum++;
+								p1papernum--;
+								SAT = "SCISSORS BEATS PAPER!!! The opponent gains the player's paper!";
+								roundWinner = "Computer win. Scissors beats paper";
+								p1weapon = "images/p1" + p1weapontype + ".jpg";
+								chosencompweapon = "images/comp" + compWeapon + ".jpg";
+							}
+						}
+					}
+					else
+					{
+						//This one is in case of a tie
+						if (p1weapontype == compWeapon)
+						{
+							oldWeaponPlayed = p1weapontype;
+							SAT = "OHHHH!!! LOOKS LIKE THEY PLAYED THE SAME WEAPON! WOW! WHAT ARE THE ODDS OF THAT? Neither player loses a weapon."
+							roundWinner = "Tie";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+					//these 3 are for the player victory
+						if (p1weapontype == "rock" && compWeapon == "scissors")
+						{	
+							oldWeaponPlayed = p1weapontype;
+							p1scissorsnum++;
+							compscissorsnum--;
+							SAT = "ROCK BEATS SCISSORS!!! The player gains the opponent's scissors!";
+							roundWinner = "Player Win. Rock beats scissors";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+						if (p1weapontype == "paper" && compWeapon == "rock")
+						{
+							oldWeaponPlayed = p1weapontype;
+							p1rocknum++;
+							comprocknum--;
+							SAT = "PAPER BEATS ROCK!!! The player gains the opponent's rock!";
+							roundWinner = "Player win. Paper beats rock";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+						if (p1weapontype == "scissors" && compWeapon == "paper")
+						{
+							oldWeaponPlayed = p1weapontype;
+							p1papernum++;
+							comppapernum--;
+							SAT = "SCISSORS BEATS PAPER!!! The player gains the opponent's paper!";
+							roundWinner = "Player win. Scissors beats paper";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+						//these 3 are for the computer victory
+						if (compWeapon == "rock" && p1weapontype == "scissors")
+						{
+							oldWeaponPlayed = p1weapontype;
+							compscissorsnum++;
+							p1scissorsnum--;
+							SAT = "ROCK BEATS SCISSORS!!! The opponent gains the player's scissors!";
+							roundWinner = "Computer win. Rock beats scissors";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+						if (compWeapon == "paper" && p1weapontype == "rock")
+						{
+							oldWeaponPlayed = p1weapontype;
+							comprocknum++;
+							p1rocknum--;
+							SAT = "PAPER BEATS ROCK!!! The opponent gains the player's rock!";
+							roundWinner = "Computer win. Paper beats rock";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+						if (compWeapon == "scissors" && p1weapontype == "paper")
+						{
+							oldWeaponPlayed = p1weapontype;
+							comppapernum++;
+							p1papernum--;
+							SAT = "SCISSORS BEATS PAPER!!! The opponent gains the player's paper!";
+							roundWinner = "Computer win. Scissors beats paper";
+							p1weapon = "images/p1" + p1weapontype + ".jpg";
+							chosencompweapon = "images/comp" + compWeapon + ".jpg";
+						}
+					}
+				}
+				display();
+			}
+		}
+		function chooseCompWeapon()
+		{
+			var weaponNum = getRandomInteger(1, 3)
+			console.log(weaponNum);
+			var compWeapon = ""
+			if(comprocknum == 0 && comppapernum == 0 && compscissorsnum == 0)
+			{
+				
+			}
+			else
+			{
+				if (weaponNum == 1)
+				{
+					if (comprocknum == 0)
+					{
+						compWeapon = chooseCompWeapon();
+					}
+					else
+					{
+						compWeapon = "rock";
+					}
+				}
+				if (weaponNum == 2)
+				{
+					if (comppapernum == 0)
+					{
+						compWeapon = chooseCompWeapon();
+					}
+					else
+					{
+						compWeapon = "paper";
+					}
+				}
+				if (weaponNum == 3)
+				{	
+					if (compscissorsnum == 0)
+					{
+						compWeapon = chooseCompWeapon();
+					}
+					else
+					{
+						compWeapon = "scissors";
+					}
+				}
+			}
+			console.log(compWeapon);
+			return compWeapon;
+		}
+		function craftNewWeapon(craftThis)
+		{
+			//debugger;
+			if (gameOver)
+			{
+			
+			}
+			else
+			{
+				if (craftThis == 'rock')
+				{
+					if (p1papernum == 0 || p1scissorsnum == 0)
+					{
+						SAT = "Sorry bud, you can't craft that weapon, you don't have the materials for it"
+						roundWinner = "Player attempted to craft"
+					}
+					else
+					{
+						p1rocknum++
+						p1papernum--
+						p1scissorsnum--
+						roundWinner = "Player was crafting"
+						SAT = "Round doesn't count Player was crafting"
+						p1weapon = "images/p1" + craftThis + ".jpg";
+						chosencompweapon = "images/comp" + craftThis + ".jpg";
+					}
+				}
+				if (craftThis == 'paper')
+				{
+					if (p1rocknum == 0 || p1scissorsnum == 0)
+					{
+						SAT = "Sorry bud, you can't craft that weapon, you don't have the materials for it"
+						roundWinner = "Player attempted to craft"
+					}
+					else
+					{
+						p1rocknum--
+						p1papernum++
+						p1scissorsnum--
+						roundWinner = "Player was crafting"
+						SAT = "Round doesn't count Player was crafting"
+						p1weapon = "images/p1" + craftThis + ".jpg";
+						chosencompweapon = "images/comp" + craftThis + ".jpg";
+					}
+				}
+				if (craftThis == 'scissors')
+				{
+					if (p1papernum == 0 || p1rocknum == 0)
+					{
+						SAT = "Sorry bud, you can't craft that weapon, you don't have the materials for it"
+						roundWinner = "Player attempted to craft"
+					}
+					else
+					{
+						p1rocknum--
+						p1papernum--
+						p1scissorsnum++
+						roundWinner = "Player was crafting"
+						SAT = "Round doesn't count Player was crafting"
+						p1weapon = "images/p1" + craftThis + ".jpg";
+						chosencompweapon = "images/comp" + craftThis + ".jpg";
+					}
+				}
+				display();
+			}
+		}
+		//for testing purposes only
+		function test()
+		{
+			//document.getElementById(p1weaponpic)
+			//document.getElementById("combatLog").deleteRow(-1);
+			p1rocknum--
+			p1scissorsnum--
+			//p1papernum--
+			display();
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<h1>Xtreme Rock Paper Scissors!</h1>
+		<div>Rules: To play this game, you only need to know 6 things:</div>
+		<div>1: You need to know how to play rock paper scissors. The gist of it is that you and another pplayer use your fingers to create the shape of either a rock paper or scissor at the same time that your opponent does. Whoever creates the weapon that beats the other one wins.</div>
+		<div>2: The available weapons are rock, paper, and scissors.  Rock beats scissors, scissors beats paper, and paper beats rock</div>
+		<div>3: In this version of XTREME rock paper scissors, you have to play a little bit differently. In the regular game, you can play any weapon at any time with no consequence (besides losing of course). In this version, you only have 5 of each weapon to start with, and if you lose the match, you lose that weapon.</div>
+		<div>4: If you use a weapon 3 times in a row, you can no longer use that weapon</div>
+		<div>5: If you win however, you get to take your opponents weapons and use them against them, thus increasing your own arsenal</div>
+		<div>6: To win, you need to rid your opponent of all of their weapons. Alternatively, if your opponenet has only one type of weapon left, you automatically win because your opponent cannot win with only a single type of weapon.</div>
+		<a href = "../index.html">Return to Hub</a>
+		<div id = "centerEverything">
+		<h3>Annoying Sports Announcer guy: "<span id = "annoyingSportsAnnouncerText"></span>"</h3>
+		<button onclick = "restart();">Restart</button>
+		<table id = "table">
+			<tr>
+				<td colspan = "3" id = "weaponComparison"><div><image alt = "Waiting on player" id = "p1weaponpic" src = "images/t&j.jpg" height = 200 width = 175/><image id = "compweaponpic" src = "images/t&j 2.jpg" height = 200 width = 175 alt = "Waiting on player"/></div></td>
+			</tr>
+			<tr>
+				<td id = "p1stats">p1 stats</td>
+				<td id = "compstats">comp stats</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<button onclick = "useWeapon('rock');">Use <image src = "images/p1rock.jpg" height = 100 width = 150/></button>
+					<button onclick = "useWeapon('paper');">Use <image src = "images/p1paper.jpg" height = 100 width = 150/></button>
+					<button onclick = "useWeapon('scissors');">Use <image src = "images/p1scissors.jpg" height = 100 width = 150/></button>
+				</td>
+				<td>
+					<image src = "images/comprock.jpg" height = 100 width = 150 id = "comprockpic">
+					<image src = "images/comppaper.jpg" height = 100 width = 150 id = "comppaperpic"/>
+					<image src = "images/compscissors.jpg" height = 100 width = 150 id = "compscissorspic"/>
+				</td>
+			</tr>
+		</table>
+		<div><button onclick = "craftNewWeapon('rock')">Craft Rock <image src = "images/comprock.jpg" height = 50 width = 75></button><button onclick = "craftNewWeapon('paper')">Craft Paper <image src = "images/comppaper.jpg" height = 50 width = 75></button><button onclick = "craftNewWeapon('scissors')">Craft Scissors <image src = "images/compscissors.jpg" height = 50 width = 75></button></div>
+		<!--<button onclick = "test();"></button> -->
+		<table id = "combatLog">
+			<tr>
+				<td colspan = "2">Combat Log</td>
+			</tr>
+			<tr>
+				<td>Number of rounds passed</td>
+				<td>Combat Result:</td>
+			</tr>
+		</table>
+		</div>
+		<br />
+		<br />
+		<a href = "../index.html">Return to Hub</a>
+	</body>
+</html>

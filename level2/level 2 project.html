@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title> Are you ready to take on the challenge of Spooky Doot castle?</title>
+		<style>
+		div
+		{
+			text-align:center
+		}
+		a 
+		{
+			font: bold 11px Arial;
+			text-decoration: none;
+			background-color: #EEEEEE;
+			color: #333333;
+			padding: 2px 6px 2px 6px;
+			border-top: 1px solid #CCCCCC;
+			border-right: 1px solid #333333;
+			border-bottom: 1px solid #333333;
+			border-left: 1px solid #CCCCCC;
+		}
+		img
+		{
+			width:100%;
+		}
+		body
+		{
+			background-color: lightblue
+		}
+		</style>
+		<script>
+		function initialize()
+		{
+			sessionStorage.redcoinamount = 0
+			sessionStorage.redcoin1 = "not found";
+			sessionStorage.redcoin2 = "not found";
+			sessionStorage.redcoin3 = "not found";
+			sessionStorage.redcoin4 = "not found";
+			sessionStorage.redcoin5 = "not found";
+			sessionStorage.redcoin6 = "not found";
+			sessionStorage.redcoin7 = "not found";
+			sessionStorage.redcoin8 = "not found";
+			sessionStorage.Health = 5;
+			sessionStorage.starsFound = 0;
+			sessionStorage.foundCoin1 = "false";
+			sessionStorage.foundStar1 = "false";
+			sessionStorage.foundStar2 = "false";
+			sessionStorage.foundStar3 = "false";
+			sessionStorage.foundStar4 = "false";
+			sessionStorage.Staringcontest = "N/A";
+			sessionStorage.room5key = "not found";
+			sessionStorage.mansionhallTmpTxt = "";
+			sessionStorage.eyeBallStatus = "alive";
+			sessionStorage.eyeBallHealth = 3;
+			sessionStorage.numHugsGiven = 0;
+			sessionStorage.eyeBallattacked = false;
+			sessionStorage.door3locked = "false";
+			sessionStorage.numStoreVisit = 0
+			sessionStorage.sphinxAllowPass = "no"
+			sessionStorage.sphinxHealth = 5
+			sessionStorage.flatterSphinxCount = 0
+			sessionStorage.usePortalnotAllowed = ""
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<h1>Are you ready to take on the challenge of Spooky Doot castle?</h1>
+		<div><img src = "images/overview.png" /></div>
+		<div>You are about to enter the spookiest of all haunted houses.
+		You will encounter spooky scary skeletons that send shivers down your spine.
+		Are you prepared?</div>
+		<div><a href = "entrance.html">Ready to begin? Click me!</a></div>
+		<br />
+		<br />
+		<a href = "../index.html">Return to Hub</a>
+	</body>
+</html>

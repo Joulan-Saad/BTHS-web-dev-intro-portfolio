@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style>
+		/*
+		The following CSS is in my CSS file but the img size needs to be changed so all other CSS is going to be copied in instead of just removing the img CSS from the CSS file because it is used in all other pages
+		*/
+		a 
+		{
+			font: bold 11px Arial;
+			text-decoration: none;
+			background-color: #EEEEEE;
+			color: #333333;
+			padding: 2px 6px 2px 6px;
+			border-top: 1px solid #CCCCCC;
+			border-right: 1px solid #333333;
+			border-bottom: 1px solid #333333;
+			border-left: 1px solid #CCCCCC;
+		}
+		body
+		{
+			background-color: lightblue
+		}
+		#redCoinsFound
+		{
+			color:navy;
+		}
+		#healthText
+		{
+			color:red;
+		}
+		#red
+		{
+			color:red;
+		}
+		#navy
+		{
+			color:navy;
+		}
+		#redCoinsFound
+		{
+			color:navy;
+		}
+		#green
+		{
+			color:green
+		}
+		#foundStars
+		{
+			color:green
+		}
+		img
+		{
+			width:50%;
+		}
+		</style>
+		<script src = "haunted house utilities.js"></script>
+		<script src = "utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			sessionStorage.mansionhallTmpTxt = "";
+			displayStats();
+			respond = ""
+			respond = document.getElementById("yourResponse");
+			randInt = 0
+			sphinxAct = ""
+			sphinxAct = document.getElementById("sphinxActions");
+			tmpTxt = ""
+			linkPortal = document.getElementById("portalLink")
+			sphinxActions.innerHTML = sessionStorage.usePortalnotAllowed
+		}
+		function answerRiddle()
+		{
+			respond.innerHTML = ""
+			sphinxAct.innerHTML = ""
+			if (sessionStorage.Health == 0 || sessionStorage.Health < 0)
+			{
+				respond.innerHTML = "You have died and can no longer perform any actions. Please restart to try again"
+			}
+			else
+			{
+				randInt = getRandomInteger(1, 100);
+				console.log(randInt);
+				if (randInt > 69)
+				{
+					respond.innerHTML = "You confidently step up to the sphinx and answer: Footsteps";
+					sphinxAct.innerHTML = "That is correct. Good job young one. I permit you to pass";
+					sessionStorage.sphinxAllowPass = "yes";
+				}
+				else
+				{
+					respond.innerHTML = "You think about it for a bit but come up blank. You try: Cookies?"
+					sphinxAct.innerHTML = "What? No. That's incorrect";
+					sessionStorage.Health--;
+					sessionStorage.Health--;
+					sphinxAct.innerHTML = "The Sphinx slashes at you with her claws. You take 2 damage"
+					displayStats();
+				}
+			}
+		}
+		function fightSphinx()
+		{
+			respond.innerHTML = ""
+			sphinxAct.innerHTML = ""
+			if (sessionStorage.Health == 0 || sessionStorage.Health < 0)
+			{
+				tmpTxt = "You've run out of health. You have died and cannot perform any actions. Press the restart button to continue"
+				respond.innerHTML = tmpTxt;
+			}
+			else
+			{
+				if (sessionStorage.sphinxAllowPass == "yes")
+				{
+					tmpTxt = "The spinx won't bother you anymore. Punching her now would be cruel"
+					respond.innerHTML = tmpTxt;
+					displayStats();
+				}
+				else
+				{
+					randInt = getRandomInteger(1, 100);
+					console.log(randInt);
+					if (randInt == 100)
+					{
+						sessionStorage.sphinxAllowPass = "yes";
+						tmpTxt = "You gather all of your remaining strength and put it into a single powerful punch. You punch the sphinx so hard that she disappears into the shadow realm. You can now pass through the exit!"
+						respond.innerHTML = tmpTxt;
+						displayStats();
+					}
+					else
+					{
+						if (randInt > 79)
+						{
+							tmpTxt = "You punch the sphinx and deal 1 damage";
+							sessionStorage.sphinxHealth--;
+							respond.innerHTML = tmpTxt;
+							displayStats();
+							if (sessionStorage.sphinxHealth == 0)
+							{
+								sessionStorage.sphinxAllowPass = "yes";
+								tmpTxt = "You punch the sphinx and deal 1 damage, killing her. You can now pass through the exit portal";
+								respond.innerHTML = tmpTxt;
+								
+							}
+						}
+						else
+						{
+							if (randInt < 41)
+							{
+								tmpTxt = "The sphinx slashes you with her claws, dealing 2 damage"
+								respond.innerHTML = tmpTxt;
+								sessionStorage.Health--;
+								sessionStorage.Health--;
+								displayStats();
+							}
+							else
+							{
+								tmpTxt = "You and the Sphinx size each other up but don't find any openings with which to strike. Both of you hesitate"
+								respond.innerHTML = tmpTxt;
+							}
+						}
+					}
+				}
+			}
+		}
+		function usePortal()
+		{
+			if(sessionStorage.sphinxAllowPass == "yes")
+			{
+				linkPortal.href = "beach.html"
+			}
+			else
+			{
+				linkPortal.href = "Room 4.html"
+				sessionStorage.usePortalnotAllowed = 'The sphinx pushes you back and prevents you from entering the portal."None of that" she says."'
+			}
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<img src = "images/dark sphinx.png" />
+		<a href = "mansionhall.html">Return to the hall</a>
+		<a href = "level 2 project.html">Restart</a>
+		<span>The exit portal is just over there! Unfortunately there is a scary sphinx guarding it! Looks like you'll have to confront her to get past.</span>
+		<div>Sphinx: "Answer my riddle and I shall allow you to pass, fail my riddle and I get a tasty meal tonight. The riddle is: The more you take, the more you leave behind. What am I?"</div>
+		<div id = "yourResponse"></div>
+		<div id = "sphinxActions"></div>
+		<button onclick = "answerRiddle();">Answer her riddle</button>
+		<button onclick = "fightSphinx();">Attempt to fight</button>
+		<a href = "beach.html" onclick = "usePortal();" id = "portalLink">Use the portal</a>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars">0</span><div>
+	</body>
+</html>

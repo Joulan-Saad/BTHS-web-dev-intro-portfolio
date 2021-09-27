@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title> </title>
+		<style>
+		</style>
+		<link rel = "stylesheet" href = "level 2 project CSS.css" />
+		<script src = "utilities.js"></script>
+		<script src = "haunted house utilities.js"></script>
+		<script>
+		function initialize()
+		{
+			displayStats()
+			sessionStorage.mansionhallTmpTxt = ""
+		}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		<img src = "images/entrance.png" />
+		<h4>Which path will you take? Will you enter the Mansion? Or dare you explore the shed next to the haunted mansion? </h4>
+		<a href = "shed.html">Enter the shed</a>
+		<a href = "mansionhall.html">Enter the mansion</a>
+		<div id = "red">Health:<span id = "healthText">5</span></div>
+		<div id = "navy">Red Coins found:<span id = "redCoinsFound">0</span><div>
+		<div id = "green">Stars found:<span id = "foundStars"></span><div>
+		<a href = "level 2 project.html">Restart</a>
+	</body>
+</html>
