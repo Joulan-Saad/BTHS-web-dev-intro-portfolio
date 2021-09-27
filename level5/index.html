@@ -1,0 +1,801 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+        <link rel = "stylesheet" href = "columns.css" />
+        <!--
+        <link rel = "stylesheet" href = ""/>
+        <link rel = "stylesheet" href = "" />
+        -->
+		<style>
+            p
+            {
+                border:2px solid white;
+                height:200px;
+                padding:2%;
+                color:lightblue;
+            }
+
+            body
+            {
+                text-align:center;
+                background-image:url("images/background cover image.png");
+                background-color:whitesmoke;
+                color:white;
+                background-repeat:no-repeat;
+                background-attachment:fixed;
+                background-size:100vw 100vh;
+            }
+            .buttonSize
+            {
+                width:100px;
+                
+            }
+
+            .resetButton
+            {
+                width:100px;
+                display: inline-block;
+                position:relative;
+                left: 28%;
+            }
+           
+            .opaqueImage
+            {
+                opacity:75%;
+                margin-top:25px;
+            }
+            #debugStats
+            {
+                display:none;
+            }
+
+            #startButton
+            {
+                width:5%;
+            }
+            .titlePageOnly
+            {
+                display: inline;
+            }
+            #title
+            {
+                width:50%;
+                display:inline;
+            }
+            .spacing
+            {
+                margin: 25px 50px 50px;
+            }
+            .infoBoxes
+            {
+                display:block;
+            }
+
+        </style>
+        <script src = "utilities.js"></script>
+        <!--
+        <script src = ".js"></script>
+        -->
+        <script>
+            function initialize()
+            {
+                //the 6 basic stats that will determine your outcome in the quiz. 
+                //I originally planned to do multiple pages for each quiz question, 
+                //but that's kinda redundant, so I'll use a display function and just update the text with an array
+                str = 0;
+                dex = 0;    
+                con = 0;
+                int = 0;
+                wis = 0;
+                cha = 0;
+                //For debugging purposes. It is off by default
+                //enableDebugStats(true);
+                debugModeEnabled = false;
+
+                questionPage = 0;
+
+                //This array will hold all the questions that we will switch between so we don't have to clutter up a function with the 
+                //questions and answers that we're going to switch in and out of existence
+                //Starting at 0 is the intro page which will introduce the user to the quiz. All "pages" after that will be questions
+                //I say "pages" in air quotes because I'm not actually making a new page, it's just me swapping out the text.   
+
+                titleText = ["Which D&D class are you?", 
+                "Question #1: What are your thoughts on magic?", 
+                "Question #2: You are walking along a road and find a merchant who has broken a wheel on his carriage. What do you do?", 
+                "Question #3: You find the dragon that has been terrorizing a nearby village. What do you do?", 
+                "Question #4: What is something you usually do daily?", 
+                "Question #5: How would you interrogate an enemy you’ve captured for info?", 
+                "Question #6: you’ve completed a dangerous quest and a deity decides to grant you one request. What do you ask for?", 
+                "Question #7: What weapon suits you best?", 
+                "Question #8: What is your goal in life?", 
+                "Question #9: How well do you do in social situations?", 
+                "Question #10: What would you say is your greatest skill?", 
+                "",
+                "Results: You are a Wizard",
+                "Results: You are a Rogue",
+                "Results: You are a Fighter",
+                "Results: You are a Barbarian",
+                "Results: You are a Cleric",
+                "Results: You are a Bard"
+
+                ];
+
+                
+                //This array will hold all the answers that go in the first box, and the next 5 arrays will be the same
+                //except that they're for different boxes
+                //You'll notice the stats being placed after the text. That's so I can later use a split function to know which stats to update
+                //
+                pText1 = [
+                    "One of the most frequently used characters by beginner players due to its simple yet effective playstyle. Using this class, you are able to wield just about every weapon you can think of, from swords to spears to bows,as well as wear armor and use shields. They are, as the name suggests, fearsome fighters that usually take the front line in combat.", 
+                    "Magic? What’s that?;STR;INT", 
+                    "Perfect opportunity to take a little something while he’s distracted;DEX;WIS", 
+                    "Talk to it! Maybe it’s just lonely and misunderstood and wants companionship;CHA;WIS", 
+                    "Prayer;WIS;STR", 
+                    "Capture? I don’t take prisoners;CON;INT", 
+                    "Knowledge of as many spells as possible;INT;STR",
+                    "A sword, maybe a bow at times;STR",
+                    "Mastering all the magic i can;INT",
+                    "I’ll just copy what everyone around me is doing;CON",
+                    "My lord has blessed me with great wisdom and I can use it to my advantage to help others in the best way possible;WIS",
+                    "",
+                    "Typical Flaw: Physically weak",
+                    "Typical Flaw: Not very wise and is often involved in more shady business",
+                    "Typical Flaw: Not usually much help in scenarios that don't require physical strength",
+                    "Typical Flaw: Not usually much help in scenarios that don't require physical strength and is prone to rage",
+                    "Typical Flaw: Dedicated to the code of their God, almost unreasonably so",
+                    "Typical Flaw: Flirts a bit too much or is a bit too carefree"
+                ];
+                
+                pText2 = [
+                    "The wizard class is best suited for supporting the party from the rear with their wide range of spell options. They have the largest spell list in the game, and can switch out the spells they can use every day, making them very versatile. The downside is that they, like any other caster, only have a certain amount of mana a day with which to use spells, and are also very vulnerable to attacks since they typically have the lowest amount of hp in most, if not all parties.", 
+                    "Magic is a great versatile tool that can greatly benefit everyone with enough hard work;INT;STR", 
+                    "A little surprised that he doesn’t know the mending cantrip as it is perhaps one of the most simple spells;INT;CHA", 
+                    "You have violated my god’s laws and hurt many innocents, NOW PREPARE TO FEEL HEAVEN’S WRATH!!!!;WIS;CHA", 
+                    "Studying;INT;CHA", 
+                    "My persuasiveness is unparalleled. I’ll have him spilling secrets before you know it;CHA;STR", 
+                    "There’s only one true reward in life;CHA;CON",
+                    "The blessings of my lord are sufficient;WIS",
+                    "Becoming a strong world-renowned warrior;STR",
+                    "Social situations are my expertise. No one can resist my humor and good looks;CHA",
+                    "Sneaking around requires amazing dexterity. Lucky thing i never skip a yoga class;DEX",
+                    "",
+                    "Typical Strength: Usually the definition of Big Brain Time",
+                    "Typical Strength: A mastery of deception and stealth",
+                    "Typical Strength: Excels in physical combat",
+                    "Typical Strength: Can be even tougher than the fighter",
+                    "Typical Strength: Their faith turns them into a force to be reckoned with. Clerics typically have the strength of a Fighter as well as the spellcasting ability of a Wizard alongside their own healing capabilities",
+                    "Typical Strength: Has the most creative approach to most situations"
+                ];
+                
+                pText3 = [
+                    "The berserker class is similar to the fighter but is different in that its fighting style is mostly focused around them raging at absolutely everything. They usually have the most health of any person in the party and are perfect for getting up close and personal with just about every adversary they may come across.", 
+                    "Magic is a blessing provided by the gods;WIS;CHA", 
+                    "Help them out if they seem friendly and be overly friendly in return (bonus if they’re single);CHA;CON", 
+                    "Finally, a worthy opponent! Our battle will be legendary! CHAAAAAAAAARGE;CON;INT", 
+                    "Huh, my neighbor still hasn’t noticed that I “borrowed” his giant kit-kat supply.;DEX;WIS", 
+                    "I think my fists are pretty convincing;STR;CHA", 
+                    "OMG OMG OMG SENPAI (the god) NOTICED ME OMG OMG OMG;WIS;CHA",
+                    "I don’t need more than a dagger to take out my foes;DEX",
+                    "Serving my lord till the end of my days;WIS",
+                    "Sit in the corner and try to stay out of sight;DEX",
+                    "My superior intellect allows me to know more spells than other spellcasters which makes me far more versatile;INT",
+                    "",
+                    "Knows an absurd amount of spells",
+                    "Can be a great surprise when necessary",
+                    "Is an excellent and reliable damage dealing front line",
+                    "Can tank just about everything",
+                    "Is incredibly versatile",
+                    "They can sing, dance, paint, prance, make a pretty dirt drawing with a lance. Plenty of ways to further enhance the battlefield if given the right chance"
+                ];
+                
+                pText4 = [
+                    "One of the most versatile classes in the game, but most widely known for their artistic talents. The bard is most often played as some sort of musician, but can be very talented with just about any form of art. Using their art as a theme, they can fill just about every role in a party, but most often than not take on the role of support in a party. They are full casters, are also able to wield decent weapons, and have a plethora of abilities to aid their party. They also have insanely high charisma which allows them to talk their way into or out of just about everything. Their power of persusion is not to be underestimated.", 
+                    "I’ll show you some magic *wink*;CHA;INT", 
+                    "Accidentally break the carriage even more with your brute strength;CON;INT", 
+                    "I challenge you to an honorable duel to the death dragon!;STR;DEX", 
+                    "*insert training montage here*;STR;DEX", 
+                    "Threaten to torture him and then dispose of him once I have what I need. Can’t have any loose ends.;DEX;WIS", 
+                    "*holds up broken double bladed axe* Need new stabby thing;CON;INT",
+                    "Anything I can use to bash and wack with is fine by me;CON",
+                    "Enjoy life to the fullest with a carefree attitude. You only live once after all;CHA",
+                    "Make polite small talk and try to convert people to my religion when possible;WIS",
+                    "I’m an expert at navigating the dodgy waters of a conversation and have an excellent way with words.;CHA",
+                    "",
+                    "Best suited for ranged support",
+                    "Best suited for missions requiring subtlety",
+                    "Very versatile choice of weaponry",
+                    "Can use most melee weapons but prefers the biggest and heaviest weaponry",
+                    "Usually the best healer",
+                    "Has a silver tongue and can navigate conversational waters like an experienced sailor"
+                ];
+                
+                pText5 = [
+                    "If you want to be virtually invisible at all times, then this class is perfect for you. Using sneaky tactics and getting the drop on an enemy is this class's specialty. As a rogue you are basically a very good assassin with a side of thief. Rogue's are masters of getting the drop on their enemy and preventing the enemy from getting the drop on them using about 5 million different abilities to get out of harm's way after stabbing you in the back.", 
+                    "Pfft, those lousy magic casters can’t hit me if they can’t see me;DEX;WIS", 
+                    "An honorable fighter never turns his back on someone in aid! (but you end up helping to push the carriage back because you couldn’t figure out how to help);STR;DEX", 
+                    "Wait till it’s asleep and sneak attack it if possible. Otherwise I'll just take some of that gold and I’ll be off. I never liked those villages anyway;DEX;STR", 
+                    "What or who can I fight that won’t get me in trouble?;CON;INT", 
+                    "I probably have some kind of truth spell around here somewhere *accidentally drops bag of spell scrolls*;INT;CON", 
+                    "An infallible magical sword;STR;DEX",
+                    "A staff and my book of magic notes and I’m good. Kind of;INT",
+                    "Stronger is better. I live for the adrenaline rush during fights;CON",
+                    "No way *casts invisibility*;INT",
+                    "My strength allows me to wield just about every weapon and be reliable on the front lines;STR",
+                    "",
+                    "Can specialize in a specific school of spells to make them more effective",
+                    "Is excellent at setting ambushes",
+                    "Rarely outmatched in physical combat",
+                    "Who needs a wall or defense when you've got this guy?",
+                    "Typically has the most \"good\" view point on matters",
+                    "Isn't usually as physically tough as a cleric but is just as versatile"
+                ];
+                
+                pText6 = [
+                    "Clerics are often portrayed as healers who heal their allies after just about every situation, but when actually creating a cleric, you realize that they can do so much more than heal. They not only have some of the best spells in the game on their spell list, but can also easily hold their ground on the front lines of a battle due to their armor and weapon proficiencies. They are a very versatile class, much like the bard, due to the very different types of abilities that a cleric gets depending on which subclass they choose, but their main gimmick is being a devout worshipper of a specific god and using their devoution as fuel for their abilities.", 
+                    "ROOOOOAAAAAARRRRRRRRR;CON;INT", 
+                    "It is my duty to help others, even with simple mundane tasks (and then probably try to convert him to my religion after the carriage is fixed);WIS;STR", 
+                    "Uhh, I think I learned this banishment spell in year 3 of college, but where is the incantation? *frantic page flipping*;INT;CON", 
+                    "Who haven’t I made friends with already?;CHA;CON", 
+                    "Offer to let him go free if he provides the information and promises to turn over a new leaf;WIS;DEX", 
+                    "Hey uhh mr.god person? How did you fit this baby dragon into your back pocket? Like, it’s not smushed or anything. *Holds up adorable baby dragon that you took out of the god’s back pocket without him noticing somehow*;DEX;WIS",
+                    "A wand, a sword, a bow, I can do it all. But with my devilish charms I probably won’t need them;CHA",
+                    "Become wealthy as fast as possible using whatever method it takes and retire;DEX",
+                    "Boast about my heroic deeds and exploits;STR",
+                    "I am a walking, talking tank. You will almost never see me get knocked down in a fight due to my insane constitution;CON",
+                    "",
+                    "Doesn't really rely on equipment to be more effective as they level up",
+                    "Doesn't rely much on equipment but it can help",
+                    "Can manage without equipment but benefits greatly from higher tier armor and weapons",
+                    "Uses heavy weapons. What about armor you ask? No need, his skin is tougher than most armor",
+                    "Doesn't need much equipment like the wizard, but can benefit greatly like the fighter",
+                    "Doesn't need much in the way of equipment aside from their art/music equipment"
+                ];
+
+                //Format: question chosen, stat to increase, stat to decrease
+                questionAnswers = ["", "", "", "", "", "", "", "", "", ""];
+
+                document.getElementById("start").style.display = "inline";
+                document.getElementById("previous").style.display = "none";
+                document.getElementById("next").style.display = "none";
+                document.getElementById("reset").style.display = "none";
+                document.getElementById("submit").style.display = "none";
+
+                //debugger;
+                //updateDebugStats();
+                
+                display();
+            }
+
+            //This function serves to swap certain images with other images at certain points
+            function animateImage(image,state)
+            {
+                //We want to animate certain images when the mouse is hovering over them
+                if (state == "animated")
+                {
+                    document.getElementById(image).src = "images/animatedDice.gif";
+                }
+                else
+                {
+                    document.getElementById(image).src = "images/" + image + "Dice.png";
+                }
+            }
+
+            function display()
+            {
+                //debugger;
+                //this takes the page number and sets the text based on that
+                document.getElementById("title").innerHTML = titleText[questionPage];
+
+                if (questionPage == 0)
+                {
+                    for (i=0;i<6;i++)
+                    {
+                        document.getElementById(i).style.backgroundColor = "transparent";
+                        document.getElementById(i).style.color = "lightblue";
+                        document.getElementById(i ).style.opacity = "1";
+                    }
+                    var titleElements = document.getElementsByClassName("titlePageOnly");
+                    for (var i = 0; i < titleElements.length;i++)
+                    {
+                        titleElements[i].style.display = "inline";
+                    }
+                    
+                    
+                    //Brings up the start button and hides the others
+                    document.getElementById("start").style.display = "inline";
+                    document.getElementById("previous").style.display = "none";
+                    document.getElementById("next").style.display = "none";
+                    document.getElementById("reset").style.display = "none";
+                    document.getElementById("submit").style.display = "none";
+                    
+                }
+                else if (questionPage == 11)
+                {
+                    /*
+                    12 - wizard
+                    13 - rogue
+                    14 - fighter
+                    15 - barbarian
+                    16 - cleric
+                    17 - bard
+                    */
+                    switch (getClassResult()){
+                    case "Wizard":
+                        questionPage++;
+                        break;
+                    case "Rogue":
+                        questionPage+=2;
+                        break;
+                    case "Fighter":
+                        questionPage+=3;
+                        break;
+                    case "Barbarian":
+                        questionPage+=4;
+                        break;
+                    case "Cleric":
+                        questionPage+=5;
+                        break;
+                    case "Bard":
+                        questionPage+=6;
+                        break;
+                    }
+                    document.getElementById("previous").style.display = "none";
+                    document.getElementById("next").style.display = "none";
+                    document.getElementById("submit").style.display = "none";
+                    for (i=0;i<6;i++)
+                    {
+                        document.getElementById(i).style.backgroundColor = "transparent";
+                        document.getElementById(i).style.color = "lightblue";
+                        document.getElementById(i ).style.opacity = "1";
+                    }
+                }
+                else
+                {
+                    var titleElements = document.getElementsByClassName("titlePageOnly");
+                    for (var i = 0; i < titleElements.length;i++)
+                    {
+                        titleElements[i].style.display = "none";
+                    }
+                    
+                    //Hides the start button and brings up the others
+                    document.getElementById("start").style.display = "none";
+                    document.getElementById("previous").style.display = "inline";
+                    document.getElementById("next").style.display = "inline";
+                    document.getElementById("reset").style.display = "inline";
+                    document.getElementById("submit").style.display = "inline";
+                    titleText[11] = "Results: You are a " + getClassResult();
+                }
+                if (!(questionPage==0 || questionPage>10))
+                {
+                    for (i=0;i<6;i++)
+                    {
+                        document.getElementById(i).style.backgroundColor = "transparent";
+                        document.getElementById(i).style.color = "lightblue";
+                        document.getElementById(i ).style.opacity = "1";
+                    }
+                    var selectedChoice = questionAnswers[questionPage-1].split(';');
+                    if(!(selectedChoice[0]==""))
+                    {
+                        document.getElementById(selectedChoice[0]).style.backgroundColor = "white";
+                        document.getElementById(selectedChoice[0]).style.color = "navy";
+                        document.getElementById(selectedChoice[0] ).style.opacity = "0.8";
+                    }
+                    
+                }
+                
+
+                getInfo(true);
+            }
+
+
+            function getInfo(loadChoices, choiceSelected)
+            {
+                //pulls all info relevant to the page into a single array
+                var pageInfo = [];
+                pageInfo[0] = pText1[questionPage];
+                pageInfo[1] = pText2[questionPage];
+                pageInfo[2] = pText3[questionPage];
+                pageInfo[3] = pText4[questionPage];
+                pageInfo[4] = pText5[questionPage];
+                pageInfo[5] = pText6[questionPage];
+                
+
+                if (loadChoices)
+                {
+                    //debugger;
+                    //takes the text from the appropriate arrays and displays them in the appropriate place
+                    //after splitting them to ensure that the stat info is not visibly displayed
+                    for (var i = 0; i < 6;i++)
+                    {
+                        var splitInfo = pageInfo[i].split(';');
+
+                        document.getElementById(i).innerHTML = splitInfo[0];
+                    }
+                }
+                else
+                {
+                    var splitInfo = pageInfo[choiceSelected].split(';');
+                    /*
+                    changeStat(splitInfo[1],splitInfo[2]);
+                    if (questionPage!=0 && questionPage!=12 && questionPage!=13 && questionPage!=14 && questionPage!=15 && questionPage!=16 && questionPage!=17)
+                    {
+                        changePageNumber("next");
+                    }
+                    */
+                   if (!(questionPage==0 || questionPage>10))
+                   {
+                        questionAnswers[questionPage-1] = "" + choiceSelected + ";" + splitInfo[1] + ";" + splitInfo[2];
+                        for (i=0;i<6;i++)
+                        {
+                            document.getElementById(i).style.backgroundColor = "transparent";
+                            document.getElementById(i).style.color = "lightblue";
+                            document.getElementById(i ).style.opacity = "1";
+                        }
+                        document.getElementById(choiceSelected).style.backgroundColor = "white";
+                        document.getElementById(choiceSelected).style.color = "navy";
+                        document.getElementById(choiceSelected ).style.opacity = "0.8";
+                   }
+                    
+                }
+                
+
+            }
+
+            function changePageNumber(buttonPressed)
+            {
+                //Changes the page number and then updates the display accordingly in order to display the correct question and answers
+                //start button only ever sets the page number to the first page
+                if (buttonPressed == "start")
+                {
+                    questionPage = 1;
+                }
+
+                if (buttonPressed == "reset")
+                {
+                    reset();
+                }
+                
+                if (buttonPressed == "next")
+                {
+                    if(questionPage==10)
+                    {
+                        alert("Please press the submit button if you have answered all questions");
+                        return;
+                    }
+                    else if (questionPage>9)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        questionPage++;
+                    }
+                }
+
+                if (buttonPressed == "previous")
+                {
+                    if (questionPage == 1)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        questionPage--;
+                    }
+                }
+
+                if (buttonPressed=="submit")
+                {
+                    var everyQuestionAnswered = true;
+                    for (i=0; i<questionAnswers.length; i++)
+                    {
+                        if (questionAnswers[i]=="")
+                        {
+                            everyQuestionAnswered = false;
+                            break;
+                        }
+                    }
+                    if (everyQuestionAnswered)
+                    {
+                        questionPage = 11;
+                    }
+                    else
+                    {
+                        alert("You have not answered all available questions");
+                    }
+                }
+                
+                display();
+            }
+
+
+            function reset()
+            {
+                questionPage = 0;
+                questionAnswers = ["", "", "", "", "", "", "", "", "", ""];
+                str = 0;
+                dex = 0;    
+                con = 0;
+                int = 0;
+                wis = 0;
+                cha = 0;
+                //updateDebugStats();
+                display();
+            }
+
+            function selection(selection, mouseover, chosen)
+            {
+                if (questionPage == 0 || questionPage>10)
+                {
+                    return;
+                }
+                else
+                {
+                    if (mouseover)
+                    {
+                        document.getElementById(selection).style.backgroundColor = "white";
+                        document.getElementById(selection).style.color = "navy";
+                        document.getElementById(selection ).style.opacity = "0.8";
+                    }
+                    else
+                    {
+                        var selectedChoice = questionAnswers[questionPage-1].split(';');
+                        if (!(selectedChoice[0]==selection))
+                        {
+                            document.getElementById(selection).style.backgroundColor = "transparent";
+                            document.getElementById(selection).style.color = "lightblue";
+                            document.getElementById(selection ).style.opacity = "1";
+                        }
+                        
+                    }
+                }
+                
+            }
+
+            function changeStat(increasedStat, decreaseStat)
+            {
+                //I couldn't think of a neat way to do it, so I just did it the long way (a bunch of if statements), which is kinda annoying, but it'll get the job done for this
+                //update: replaced the million ifs with a switch case and I gotta say, this looks a lot neater
+                console.log(increasedStat);
+                console.log(decreaseStat);
+
+                switch (increasedStat){
+                    case "INT":
+                        int++;
+                        break;
+                    case "DEX":
+                        dex++;
+                        break;
+                    case "STR":
+                        str++;
+                        break;
+                    case "CON":
+                        dex++;
+                        break;
+                    case "WIS":
+                        wis++;
+                        break;
+                    case "CHA":
+                        cha++;
+                        break;
+                }
+
+                switch (decreaseStat){
+                    case "INT":
+                        int--;
+                        break;
+                    case "DEX":
+                        dex--;
+                        break;
+                    case "STR":
+                        str--;
+                        break;
+                    case "CON":
+                        dex--;
+                        break;
+                    case "WIS":
+                        wis--;
+                        break;
+                    case "CHA":
+                        cha--;
+                        break;
+                }
+                
+            }
+
+            function getClassResult()
+            {
+                //if (!(questionPage<11))
+                //{
+                   //debugger;
+                   var statInfo = "";
+                    for (i=0;i<10;i++)
+                    {
+                        statInfo = questionAnswers[i].split(';');
+                        changeStat(statInfo[1],statInfo[2]);
+                    }
+                    var highest = Math.max(cha,int,wis,str,con,dex);
+                    //debugger;
+                    //replaced my if statements with switch case
+                    switch (highest){
+                        case int:
+                            return "Wizard";
+                            break;
+                        case dex:
+                            return "Rogue";
+                            break;
+                        case str:
+                            return "Fighter";
+                            break;
+                        case con:
+                            return "Barbarian";
+                            break;
+                        case wis:
+                            return "Cleric";
+                            break;
+                        case cha:
+                            return "Bard";
+                            break;
+                    }   
+                //}
+                
+            }
+            /*
+            these functions are useless now that the page only calculates the result at the very end
+            function updateDebugStats()
+            {
+                document.getElementById("debugStats").innerHTML = "Debug: Current stats: CHA:" + cha + " WIS:" + wis + " INT:" + int + " DEX:" + dex + " STR:" + str + " CON:" + con + " Page Num: " + questionPage + " Current Result: " + getClassResult();
+            }
+
+            function enableDebugStats(enable)
+            {
+                if (enable)
+                {
+                    document.getElementById("debugStats").style.display = "block";
+                }
+                else
+                {
+                    document.getElementById("debugStats").style.display = "none";
+                }
+            }
+            
+            function pressDebugButton()
+            {
+                debugModeEnabled = !debugModeEnabled;
+                enableDebugStats(debugModeEnabled);
+            }
+            */
+        </script>
+	</head>
+    <body onload = "initialize();">
+        
+       <!--
+        <div><button onclick = "pressDebugButton();" id = "debugButton">Enable debug mode</button></div>
+        
+        <div id = "debugStats"></div>
+       -->
+        <img src = "images/title image.png" class = "opaqueImage"/>
+        
+        <div class = "spacing">
+            <h1 id = "title"></h1>
+        </div>
+
+        <div class = "columncontainer">
+            <span class = "column">
+                <h2 class = "titlePageOnly">The Fighter Class</h2>
+                <p class = "infoBoxes" id = 0 onmouseover = "selection(0,true);" onmouseout = "selection(0,false);" onclick = "getInfo(false,0);">  
+                    
+                </p>
+
+                <hr />
+
+                <h2 class = "titlePageOnly">The Wizard Class</h2>
+                <p class = "infoBoxes" id = 1 onmouseover = "selection(1,true);" onmouseout = "selection(1,false);" onclick = "getInfo(false,1);">
+                    
+                </p>
+            </span>
+
+            <span class = "column">
+                <h2 class = "titlePageOnly">The Barbarian Class</h2>
+                <p class = "infoBoxes" id = 2 onmouseover = "selection(2,true);" onmouseout = "selection(2,false);" onclick = "getInfo(false,2);">
+                    
+                </p>
+
+                <hr />
+
+                <h2 class = "titlePageOnly">The Bard Class</h2>
+                <p class = "infoBoxes" id = 3 onmouseover = "selection(3,true);" onmouseout = "selection(3,false);" onclick = "getInfo(false,3);">
+                    
+                </p>
+            </span>
+
+            <span class = "column">
+                <h2 class = "titlePageOnly">The Rogue Class</h2>
+                <p class = "infoBoxes" id = 4 onmouseover = "selection(4,true);" onmouseout = "selection(4,false);" onclick = "getInfo(false,4);">
+                    
+                </p>
+
+                <hr />
+
+                <h2 class = "titlePageOnly">The Cleric Class</h2>
+                <p class = "infoBoxes" id = 5 onmouseover = "selection(5,true);" onmouseout = "selection(5,false);" onclick = "getInfo(false,5);">
+                    
+                </p>
+            </span>
+        </div>
+        <div class = "columncontainer">
+            <h2 class = "titlePageOnly">Are you ready to take this quiz? Press the button (the dice) below!</h2>
+            
+            <!--
+                <img src = "images/previousDice.png" id = "startButton" onmouseover="animateImage('startButton',2)" onmouseout = "animateImage('startButton',1)" onclick = "" class = "buttonSize"/>
+            -->
+            <br />
+            <img src = "images/startDice.png" id = "start" onmouseover="animateImage('start','animated')" onmouseout = "animateImage('start','still')" onclick = "changePageNumber('start');" class = "buttonSize"/>
+            
+            
+            <img src = "images/previousDice.png" id = "previous" onmouseover="animateImage('previous','animated')" onmouseout = "animateImage('previous','still')" onclick = "changePageNumber('previous');" class = "buttonSize"/>
+            <img src = "images/nextDice.png" id = "next" onmouseover="animateImage('next','animated')" onmouseout = "animateImage('next','still')" onclick = "changePageNumber('next');" class = "buttonSize"/>
+            <img src = "images/submitDice.png" id = "submit" onmouseover="animateImage('submit','animated')" onmouseout = "animateImage('submit','still')" onclick = "changePageNumber('submit');" class = "buttonSize"/>
+            
+            <img src = "images/resetDice.png" id = "reset" onmouseover="animateImage('reset','animated')" onmouseout = "animateImage('reset','still')" onclick = "changePageNumber('reset');" class = "resetButton"/>
+            <br />
+		    <br />
+		    <a href = "../index.html">Return to Hub</a>
+        </div>
+	</body>
+</html>
+
+<!--
+    Just some notes
+    
+    wizard:
+1 - Typical Flaw: Physically weak
+2 - Typical Strength: Usually the definition of Big Brain Time
+3 - Knows an absurd amount of spells
+4 - Best suited for ranged support
+5 - Can specialize in a specific school of spells to make them more effective
+6 - Doesn't really rely on equipment to be more effective as they level up
+
+rogue
+1 - Typical Flaw: Not very wise and is often involved in more shady business
+2 - Typical Strength: A mastery of deception and stealth
+3 - Can be a great surprise when necessary
+4 - Best suited for missions requiring subtlety
+5 - Is excellent at setting ambushes 
+6 - Doesn't rely much on equipment but it can help
+
+fighter
+1 - Typical Flaw: Not usually much help in scenarios that don't require physical strength
+2 - Typical Strength: Excels in physical combat
+3 - Is an excellent and reliable damage dealing front line
+4 - Very versatile choice of weaponry 
+5 - Rarely outmatched in physical combat
+6 - Can manage without equipment but benefits greatly from higher tier armor and weapons
+
+barbarian
+1 - Typical Flaw: Not usually much help in scenarios that don't require physical strength and is prone to rage
+2 - Typical Strength: Can be even tougher than the fighter
+3 - Can tank just about everything
+4 - Can use most melee weapons but prefers the biggest and heaviest weaponry
+5 - Who needs a wall or defense when you've got this guy?
+6 - Uses heavy weapons. What about armor you ask? No need, his skin is tougher than most armor. 
+
+cleric
+1 - Typical Flaw: Dedicated to the code of their God, almost unreasonably so
+2 - Typical Strength: Their faith turns them into a force to be reckoned with. Clerics typically have the strength of a Fighter as well as the spellcasting ability of a Wizard alongside their own healing capabilities
+3 - Is incredibly versatile
+4 - Usually the best healer
+5 - Typically has the best "good" view point on matters
+6 - Doesn't need much equipment like the wizard, but can benefit greatly like the fighter
+
+bard
+1 - Typical Flaw: Flirts a bit too much or is a bit too carefree
+2 - Typical Strength: Has the most creative approach to most situations
+3 - They can sing, dance, paint, prance, make a pretty dirt drawing with a lance, Plenty of ways to further enhance the battlefield if given the right chance
+4 - Has a silver tongue and can navigate conversational waters like an experienced sailor
+5 - Isn't usually as physically tough as a cleric but is just as versatile
+6 - Doesn't need much in the way of equipment aside from their art/music equipment
+
+
+-->

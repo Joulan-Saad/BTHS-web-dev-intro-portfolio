@@ -1,0 +1,379 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style>
+		body.fine
+		{
+			background-color:lightblue;
+		}
+		body.hit
+		{
+			background-color:darkblue
+		}
+		body.revived
+		{
+			background-color:white
+		}
+		img
+		{
+			width:125px;
+			position: absolute;
+			left: 200px;
+			bottom: 750px;
+		}
+		#txtBx
+		{
+			position: absolute;
+			width: 50%;
+			height: 25%;
+			left: 950px; 
+			top: 730px;
+		}
+		#nutText
+		{
+			position: absolute;
+			top: 750px;
+			left: 1020px;
+			color: black;
+		}
+		#mrPeanut.calm
+		{
+			bottom: 10px;
+			left: 560px;
+			width: 20%;
+		}
+		#mrPeanut.angry
+		{
+			bottom: 250px;
+			left: 250px;
+			width: 45%;
+		}
+		#numPoints
+		{
+			position: absolute;
+			top: 880px;
+			left: 10px;
+		}
+		#numRevived
+		{
+			position: absolute;
+			top: 860px;
+			left 10px;
+		}
+		#resetButton
+		{
+			position: absolute;
+			top: 900px;
+			left 10px;
+		}
+		/*
+		#txtBx must use the top style and img must use the bottom stye because the top style
+		takes priority over the bottom style and that's not good when the webpage goes to apply both img and 
+		#txtBx to my textbox image
+		*/
+		/*
+		Convert all your image types to png then change it to png in the hammertime function
+		*/
+		</style>
+		<script src = "utilities.js"></script>
+		<script src = "splat.js"></script>
+		<script>
+		function initialize()
+		{
+			
+			//txt1Spoken = false;
+			//currentTxt = "";
+			//currentTxtCharacterNum = 0
+			pointsAchieved = 0;
+			numNutsRevived = 0;
+			insultList = DEFIANT_COMMENTS;
+			mercyList = PLEADING_COMMENTS;
+			nutSpeech = document.getElementById("nutText");
+			document.body.className = "fine";
+			for (var i = 1; i < 16; i++)
+			{
+				document.getElementById("nut" + i).style.top = getRandomInteger(10, 60) + "%";
+				document.getElementById("nut" + i).style.left = getRandomInteger(10, 90) + "%";
+				document.getElementById("nut" + i).style.cursor = "crosshair";
+				document.getElementById("nut" + i).setAttribute('draggable', false);
+			}
+			document.getElementById("mrPeanut").setAttribute('draggable', false);
+			setInterval("yeetTheNut();", 1000);
+			setInterval("chooseSpeech();", 7500);
+		}
+		function HAMMERTIME(nutNum)
+		{
+			var splatCheckList = SPLATTED_BUGS[nutNum-1].split(";");
+			if (splatCheckList[1] == "true")
+			{
+				
+			}
+			else
+			{
+				//debugger;
+				document.getElementById("nut" + nutNum).src = "images/" + randPbTreat() + ".png";
+				document.body.className = "hit";
+				setTimeout("flashRed();", 75);
+				SPLATTED_BUGS.splice(nutNum-1, 1, "nut" + nutNum + ";true")
+				document.getElementById("nut" + nutNum).style.cursor = "default";
+				pointsAchieved++;
+				display();
+				if (pointsAchieved > 6)
+				{
+					revivify();
+				}
+				if (pointsAchieved == 15)
+				{
+					bossFight();
+				}	
+			}
+			display();
+		}
+		function flashRed()
+		{
+			//I know this function name makes it sound like this is causing it to flash red, but 
+			//in reality it's causing it it revert to the old color
+			document.body.className = "fine";
+		}
+		function randPbTreat()
+		{
+			var randNum = getRandomInteger(0,2);
+			return DEAD_PEANUT[randNum];
+		}
+		function yeetTheNut()
+		{
+			
+			for (var i = 1; i < 16; i++)
+			{
+				var splatCheckList = SPLATTED_BUGS[i-1].split(";");
+				if (splatCheckList[1] == "true")
+				{
+					
+				}
+				else
+				{
+					document.getElementById("nut" + i).style.top = getRandomInteger(10, 60) + "%";
+					document.getElementById("nut" + i).style.left = getRandomInteger(10, 90) + "%";
+				}
+				//specialDisplay("regular", i);
+			}
+		}
+		function chooseSpeech()
+		{
+			if (pointsAchieved == 25)
+			{
+				nutText.innerHTML = "You've splatted us all!";
+			}
+			else
+			{
+				if (pointsAchieved >= 15)
+				{
+					nutText.innerHTML = "That's it!!! You've made me mad!"
+				}	
+				else
+				{
+					if (pointsAchieved < 8)
+					{
+						var insultNum = getRandomInteger(0, DEFIANT_COMMENTS.length);
+						nutText.innerHTML = insultList.splice(insultNum-1,1);
+					}
+					else
+					{
+						var mercyNum = getRandomInteger(0, PLEADING_COMMENTS.length);
+						nutText.innerHTML = mercyList.splice(mercyNum-1,1);
+					}
+				}
+			}			
+		}
+		function revivify()
+		{
+			if (getRandomInteger(1,10) == 10)
+			{
+				var deadNutList = [];
+				var deadCheck = [];
+				var chosenNut = [];
+				for (var i = 0; i < SPLATTED_BUGS.length; i++)
+				{
+					deadCheck = SPLATTED_BUGS[i].split(";");
+					if (deadCheck[1] == "true")
+					{
+						deadNutList.push(deadCheck[0]);
+					}
+				}
+				//chooses a random dead nut from the list of dead nuts
+				var revivedNut = deadNutList[getRandomInteger(0, deadNutList.length-1)]
+				//finds the nut that was revived and sets it's death status to alive
+				for (var a = 0;a < SPLATTED_BUGS.length;a++)
+				{
+					chosenNut = SPLATTED_BUGS[a].split(";");
+					if (chosenNut[0] == revivedNut)
+					{
+						//SPLATTED_BUGS[a] = "nut" + a + ";false"
+						document.getElementById("nut" + (a+1)).src = "images/jesus baby nut.png";
+						document.body.className = "revived";
+						setTimeout("flashRed();", 75);
+						SPLATTED_BUGS.splice(a, 1, "nut" + (a+1) + ";false")
+						document.getElementById("nut" + (a+1)).style.cursor = "crosshair";
+						pointsAchieved--;
+						numNutsRevived++;
+						console.log("Nut revived");
+						display();
+					}
+				}
+			}
+			display();
+		}
+		function display()
+		{
+			document.getElementById("numRevived").innerHTML = "Nuts revived: " + numNutsRevived;
+			document.getElementById("numPoints").innerHTML = "Points: " + pointsAchieved;
+		}
+		//This test revivify funcion is to be used only for testing to ensure the revival function works. The only difference between this
+		//and the actual function is that this always works while the other one only has a 10% chance to work.
+		function testRevivify()
+		{
+			if (getRandomInteger(10,10) == 10)
+			{
+				var deadNutList = [];
+				var deadCheck = [];
+				var chosenNut = [];
+				
+				for (var i = 0; i < SPLATTED_BUGS.length; i++)
+				{
+					deadCheck = SPLATTED_BUGS[i].split(";");
+					if (deadCheck[1] == "true")
+					{
+						deadNutList.push(deadCheck[0]);
+					}
+				}
+				//chooses a random dead nut from the list of dead nuts
+				var revivedNut = deadNutList[getRandomInteger(0, deadNutList.length-1)]
+				//finds the nut that was revived and sets it's death status to alive
+				for (var a = 0;a < SPLATTED_BUGS.length;a++)
+				{
+					chosenNut = SPLATTED_BUGS[a].split(";");
+					if (chosenNut[0] == revivedNut)
+					{
+						//SPLATTED_BUGS[a] = "nut" + a + ";false"
+						document.getElementById("nut" + (a+1)).src = "images/jesus baby nut.png";
+						document.body.className = "revived";
+						setTimeout("flashRed();", 75);
+						SPLATTED_BUGS.splice(a, 1, "nut" + (a+1) + ";false")
+						document.getElementById("nut" + (a+1)).style.cursor = "crosshair";
+						pointsAchieved--;
+						numNutsRevived++;
+						console.log("Nut revived");
+						display();
+					}
+				}
+			}
+			display();
+		}
+		//resets all necessary variables and restores the nuts to their original state
+		function reset()
+		{
+			for (var i = 0; i < 15; i++)
+			{
+				SPLATTED_BUGS.splice(i, 1, "nut" + (i+1) + ";false")
+				document.getElementById("nut" + (i+1)).src = "images/baby nut.png";
+				document.body.className = "revived";
+				setTimeout("flashRed();", 75);
+				document.getElementById("nut" + (i+1)).style.cursor = "crosshair";
+			}
+			numNutsRevived = 0;
+			pointsAchieved = 0;
+			insultList = DEFIANT_COMMENTS;
+			mercyList = PLEADING_COMMENTS;
+			document.getElementById("mrPeanut").className = "calm";
+			document.getElementById("mrPeanut").src = "images/mr.Peanut.png"
+			document.getElementById("instructions").innerHTML = "All attempts to negotiate have failed! Begin splatting the bugs! Click on each bug to splat them before they take over! After splatting a certain amount, they have a chance to revive! Splat as fast as possible!";
+			document.getElementById("nutText").innerHTML = "I am Mr.Peanut man! And you *will* hand your property over to me!";
+			display();
+		}
+		function bossFight()
+		{
+			document.getElementById("mrPeanut").src = "images/angry mrPeanut.png";
+			document.getElementById("mrPeanut").className = "angry";
+			document.getElementById("instructions").innerHTML += "Oh no! He's gotten really angry! This one will definitly require at least 10 hits to kill!"
+		}
+		function bossClick()
+		{
+			if (pointsAchieved >= 15)
+			{
+				if (pointsAchieved == 25)
+				{
+					document.getElementById("mrPeanut").src = "images/PB.png";
+				}
+				else
+				{
+					document.body.className = "hit";
+					setTimeout("flashRed();", 75);
+					pointsAchieved++;
+					if (pointsAchieved == 25)
+					{
+						document.getElementById("mrPeanut").src = "images/PB.png";
+					}
+				}
+			}
+			display();
+		}
+		/**
+		function specialDisplay(choice, nutNum)
+		{
+			if (choice == "instantTp");
+			{
+				return;
+			}
+			if (choice == "regular")
+			{
+				document.getElementById("nut" + nutNum).src = "images/baby nut.png";
+			}
+		}
+		
+		function test()
+		{
+			
+		}
+		**/
+		</script>
+	</head>
+	<body onload = "initialize();">
+	<!--
+	<button onclick = "yeetTheNut();">YEET</button>
+	
+	<button onclick = "testRevivify();">test</button>
+	
+	These two buttons were to test two functions while they were still being made. They are now unnecessary
+	
+		<button onclick = "bossFight();">boss fight</button>
+	-->
+		<div></div>
+		<a href = "../index.html">Return to Hub</a>
+		<br />
+		<button onclick = "reset();" id = "resetButton">Reset</button>
+		<div id = "instructions">All attempts to negotiate have failed! Begin splatting the bugs! Click on each bug to splat them before they take over! After splatting a certain amount, they have a chance to revive! Splat as fast as possible!</div>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(1);" id = "nut1"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(2);" id = "nut2"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(3);" id = "nut3"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(4);" id = "nut4"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(5);" id = "nut5"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(6);" id = "nut6"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(7);" id = "nut7"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(8);" id = "nut8"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(9);" id = "nut9"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(10);" id = "nut10"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(11);" id = "nut11"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(12);" id = "nut12"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(13);" id = "nut13"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(14);" id = "nut14"/>
+		<img src = "images/baby nut.png" onclick = "HAMMERTIME(15);" id = "nut15"/>
+		
+		<img src = "images/mr.peanut.png" id = "mrPeanut"  class = "calm" onclick = "bossClick();"/>
+		<img src = "images/speechBubble.png" id = "txtBx" style = "bottom: 0px"/>
+		<div id = "nutText">I am Mr.Peanut man! And you *will* hand your property over to me!</div>
+		<div id = "numRevived">Nuts revived: 0</div>
+		<div id = "numPoints">Points: 0</div>
+		
+	</body>
+</html>
